@@ -18,7 +18,9 @@ const std::map<String, String> TrainAnnouncement::stationMap = {
     {"Hdm", "Hedemora"},
     {"Avky", "Avesta Krylbo"},
     {"Må", "Morgongåva"},
-    {"Hy", "Heby"}};
+    {"Hy", "Heby"},
+    {"Sl", "Sala"},
+    {"Mrc", "Mora"}};
 
 String TrainAnnouncement::getStationName(const String &stationCode)
 {
@@ -27,7 +29,7 @@ String TrainAnnouncement::getStationName(const String &stationCode)
     {
         return it->second;
     }
-    return String("Unknown station");
+    return String(stationCode);
 }
 
 TrainAnnouncement::TrainAnnouncement()
