@@ -14,6 +14,10 @@ public:
     ~Application();
     void init();
     void run();
+
+private:
+    unsigned long lastRequestTime = 0;           // When the last request was made
+    const unsigned long requestInterval = 10000; // Request interval (10 seconds)
 };
 
 #endif // APPLICATION_H

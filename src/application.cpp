@@ -1,9 +1,6 @@
 #include "application.h"
 #include "config.h"
 
-unsigned long lastRequestTime = 0;           // When the last request was made
-const unsigned long requestInterval = 10000; // Request interval (10 seconds)
-
 Application::Application()
 {
     // Constructor
