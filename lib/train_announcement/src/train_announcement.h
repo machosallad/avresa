@@ -3,6 +3,7 @@
 
 #include <ArduinoJson.h>
 #include <Arduino.h>
+#include <map>
 
 class TrainAnnouncement
 {
@@ -34,9 +35,7 @@ private:
     String m_ToLocation;
     bool m_IsDelayed;
 
-    static const int NUM_STATIONS = 18;
-    static const String stationCodes[NUM_STATIONS];
-    static const String stationNames[NUM_STATIONS];
+    static const std::map<String, String> stationMap;
 };
 
 #endif // TRAIN_ANNOUNCEMENT_H

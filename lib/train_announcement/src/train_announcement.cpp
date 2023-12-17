@@ -1,34 +1,31 @@
 #include "train_announcement.h"
 
-const String TrainAnnouncement::stationCodes[NUM_STATIONS] = {"Lp", "Nr", "K", "Et", "Vå", "Cst", "Arnc", "U", "Fln", "Rt", "Kbä", "Ksus", "Blgc", "St", "Hdm", "Avky", "Må", "Hy"};
-const String TrainAnnouncement::stationNames[NUM_STATIONS] = {
-    "Linköping",
-    "Norrköping",
-    "Katrineholm",
-    "Eskilstuna",
-    "Västerås",
-    "Stockholm",
-    "Arlanda",
-    "Uppsala",
-    "Falun",
-    "Ransta",
-    "Kolbäck",
-    "Kvicksund",
-    "Borlänge",
-    "Säter",
-    "Hedemora",
-    "Avesta Krylbo",
-    "Heby",
-    "Morgongåva"};
+const std::map<String, String> TrainAnnouncement::stationMap = {
+    {"Lp", "Linköping"},
+    {"Nr", "Norrköping"},
+    {"K", "Katrineholm"},
+    {"Et", "Eskilstuna"},
+    {"Vå", "Västerås"},
+    {"Cst", "Stockholm"},
+    {"Arnc", "Arlanda"},
+    {"U", "Uppsala"},
+    {"Fln", "Falun"},
+    {"Rt", "Ransta"},
+    {"Kbä", "Kolbäck"},
+    {"Ksus", "Kvicksund"},
+    {"Blgc", "Borlänge"},
+    {"St", "Säter"},
+    {"Hdm", "Hedemora"},
+    {"Avky", "Avesta Krylbo"},
+    {"Må", "Morgongåva"},
+    {"Hy", "Heby"}};
 
 String TrainAnnouncement::getStationName(const String &stationCode)
 {
-    for (int i = 0; i < NUM_STATIONS; i++)
+    auto it = stationMap.find(stationCode);
+    if (it != stationMap.end())
     {
-        if (stationCodes[i] == stationCode)
-        {
-            return stationNames[i];
-        }
+        return it->second;
     }
     return String("Unknown station");
 }
