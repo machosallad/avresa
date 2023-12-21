@@ -1,7 +1,7 @@
 #include "application.h"
 #include "config.h"
 
-Application::Application()
+Application::Application() : m_trafikverketClient(SERVER_KEY, SERVER_URL), m_wifiManager(WIFI_SSID, WIFI_PASSWORD)
 {
     // Constructor
 }
@@ -13,15 +13,12 @@ Application::~Application()
 
 void Application::init()
 {
-    TrafikverketClient trafikverketClient(SERVER_KEY, SERVER_URL);
-    ContentManager contentManager();
-    WiFiManager wifiManager(WIFI_SSID, WIFI_PASSWORD);
-    wifiManager.connectToWifi();
+    m_wifiManager.connectToWifi();
 
     // Make the HTTP post request
-    if (wifiManager.isConnected())
+    if (m_wifiManager.isConnected())
     {
-        String response = trafikverketClient.getTrainAnnouncements(STATION_CODE);
+        String response = m_trafikverketClient.getTrainAnnouncements(STATION_CODE);
         Announcements announcements(response);
         announcements.printAll();
     }

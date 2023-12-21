@@ -18,6 +18,9 @@ public:
 private:
     unsigned long lastRequestTime = 0;           // When the last request was made
     const unsigned long requestInterval = 10000; // Request interval (10 seconds)
+    TrafikverketClient m_trafikverketClient;
+    ContentManager m_contentManager;
+    WiFiManager m_wifiManager;
 };
 
 #endif // APPLICATION_H
