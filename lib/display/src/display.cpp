@@ -60,6 +60,22 @@ void Display::printText(String text, int16_t x, int16_t y, Color color)
     dma_display->print(text);
 }
 
+void Display::printTextCentered(String text, Color color)
+{
+    dma_display->clearScreen();
+    dma_display->setTextSize(2);
+    dma_display->setTextWrap(false);
+    dma_display->setTextColor(this->color565(color));
+
+    int16_t xOne, yOne;
+    uint16_t w, h;
+    dma_display->getTextBounds(text, 0, 0, &xOne, &yOne, &w, &h);
+
+    int xPosition = dma_display->width() / 2 - w / 2 + 1;
+    dma_display->setCursor(xPosition, 8); // 24 is the middle of the screen
+    dma_display->print(text);
+}
+
 void Display::demo()
 {
     dma_display->clearScreen();
