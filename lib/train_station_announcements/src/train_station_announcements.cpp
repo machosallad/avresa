@@ -1,19 +1,19 @@
-#include "announcements.h"
+#include "train_station_announcements.h"
 
-Announcements::Announcements() : numAnnouncements(0)
+TrainStationAnnouncements::TrainStationAnnouncements() : numAnnouncements(0)
 {
 }
 
-Announcements::Announcements(const String &jsonString) : numAnnouncements(0)
+TrainStationAnnouncements::TrainStationAnnouncements(const String &jsonString) : numAnnouncements(0)
 {
     updateAnnouncements(jsonString);
 }
 
-Announcements::~Announcements()
+TrainStationAnnouncements::~TrainStationAnnouncements()
 {
 }
 
-void Announcements::updateAnnouncements(const String &jsonString)
+void TrainStationAnnouncements::updateAnnouncements(const String &jsonString)
 {
     // Clear the current list of TrainAnnouncement objects
     numAnnouncements = 0;
@@ -31,7 +31,7 @@ void Announcements::updateAnnouncements(const String &jsonString)
     }
 }
 
-void Announcements::printAll() const
+void TrainStationAnnouncements::printAll() const
 {
     for (int i = 0; i < numAnnouncements; ++i)
     {
@@ -40,14 +40,14 @@ void Announcements::printAll() const
     }
 }
 
-TrainAnnouncement Announcements::getAnnouncement(int index) const
+TrainAnnouncement TrainStationAnnouncements::getAnnouncement(int index) const
 {
     if (index < 0 || index >= numAnnouncements)
         return TrainAnnouncement(); // Return an empty TrainAnnouncement object
     return trainAnnouncements[index];
 }
 
-int Announcements::getNumAnnouncements() const
+int TrainStationAnnouncements::getNumAnnouncements() const
 {
     return numAnnouncements;
 }

@@ -1,5 +1,5 @@
-#ifndef ANNOUNCEMENTS_H
-#define ANNOUNCEMENTS_H
+#ifndef TRAIN_STATION_ANNOUNCEMENTS_H
+#define TRAIN_STATION_ANNOUNCEMENTS_H
 
 #include "train_announcement.h"
 #include <ArduinoJson.h>
@@ -7,12 +7,12 @@
 #define MAX_ANNOUNCEMENTS 10   // Maximum number of announcements
 #define MAX_JSON_SIZE 2048 * 2 // Maximum size of JSON string
 
-class Announcements
+class TrainStationAnnouncements
 {
 public:
-    Announcements(); // Default constructor
-    Announcements(const String &jsonString);
-    ~Announcements();
+    TrainStationAnnouncements(); // Default constructor
+    TrainStationAnnouncements(const String &jsonString);
+    ~TrainStationAnnouncements();
 
     void updateAnnouncements(const String &jsonString);
     void printAll() const;
@@ -24,4 +24,4 @@ private:
     int numAnnouncements;                                    // Number of announcements currently in the array
 };
 
-#endif // ANNOUNCEMENTS_H
+#endif // TRAIN_STATION_ANNOUNCEMENTS_H
