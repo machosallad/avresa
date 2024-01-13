@@ -14,13 +14,14 @@ Application::~Application()
 
 void Application::init()
 {
+    // Fire up the system by connecting to WiFi and fetching the latest announcements
     m_display.printTextCentered("Connecting");
     m_wifiManager.connectToWifi();
     m_display.clearScreen();
     m_display.printTextCentered("Updating");
     if (getLatestAnnouncements())
     {
-        updateDisplay();
+        updateDisplayInformation();
     }
 }
 
@@ -41,7 +42,7 @@ bool Application::getLatestAnnouncements()
     return status;
 }
 
-void Application::updateDisplay()
+void Application::updateDisplayInformation()
 {
     m_display.clearScreen();
     for (int i = 0; i < m_announcements.getNumAnnouncements(); ++i)
@@ -65,7 +66,7 @@ void Application::run()
         lastRequestTime = currentTime;
         if (getLatestAnnouncements())
         {
-            updateDisplay();
+            updateDisplayInformation();
         }
     }
 }
