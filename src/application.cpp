@@ -14,11 +14,10 @@ Application::~Application()
 
 void Application::init()
 {
-    m_display.printText("Connecting to WiFi...", 0, 0);
+    m_display.printTextCentered("Connecting");
     m_wifiManager.connectToWifi();
     m_display.clearScreen();
-    m_display.printText("Connected to WiFi", 0, 0);
-    m_display.printText("Collect info", 0, 8);
+    m_display.printTextCentered("Updating");
     if (getLatestAnnouncements())
     {
         updateDisplay();
@@ -27,7 +26,6 @@ void Application::init()
 
 bool Application::getLatestAnnouncements()
 {
-    // Make the HTTP post request
     bool status = false;
     if (m_wifiManager.isConnected())
     {
@@ -65,8 +63,6 @@ void Application::run()
     if (currentTime - lastRequestTime >= requestInterval)
     {
         lastRequestTime = currentTime;
-        Serial.println("Requesting data...");
-
         if (getLatestAnnouncements())
         {
             updateDisplay();
