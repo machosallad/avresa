@@ -6,6 +6,7 @@
 #include "web_server.h"
 #include "wifi_manager.h"
 #include "announcements.h"
+#include "display.h"
 
 class Application
 {
@@ -16,11 +17,15 @@ public:
     void run();
 
 private:
-    unsigned long lastRequestTime = 0;           // When the last request was made
-    const unsigned long requestInterval = 10000; // Request interval (10 seconds)
+    bool getLatestAnnouncements();
+    void updateDisplay();
+    unsigned long lastRequestTime = 0;            // When the last request was made
+    const unsigned long requestInterval = 300000; // Request interval (5 minutes)
     TrafikverketClient m_trafikverketClient;
     ContentManager m_contentManager;
     WiFiManager m_wifiManager;
+    Display m_display;
+    Announcements m_announcements;
 };
 
 #endif // APPLICATION_H
