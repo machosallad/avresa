@@ -9,7 +9,7 @@ String TRAIN_ANNOUNCEMENT_REQUEST(String auth_key, String station_code)
     String xml =
         "<REQUEST>\n"
         "\t<LOGIN authenticationkey='AUTH_KEY_PLACEHOLDER' />\n"
-        "\t<QUERY objecttype='TrainAnnouncement' orderby='AdvertisedTimeAtLocation' schemaversion='1' limit='10'>\n"
+        "\t<QUERY objecttype='TrainAnnouncement' orderby='AdvertisedTimeAtLocation' schemaversion='1' limit='5'>\n"
         "\t\t<FILTER>\n"
         "\t\t\t<AND>\n"
         "\t\t\t\t<OR>\n"
@@ -20,6 +20,7 @@ String TRAIN_ANNOUNCEMENT_REQUEST(String auth_key, String station_code)
         "\t\t\t\t\t<GT name='EstimatedTimeAtLocation' value='$now' />\n"
         "\t\t\t\t</OR>\n"
         "\t\t\t\t<EQ name='LocationSignature' value='STATION_CODE_PLACEHOLDER' />\n"
+        "\t\t\t\t<EQ name='ActivityType' value='Avgang' />\n"
         "\t\t\t</AND>\n"
         "\t\t</FILTER>\n"
         "\t\t<INCLUDE>InformationOwner</INCLUDE>\n"
