@@ -24,6 +24,12 @@ TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addSpace()
     return *this;
 }
 
+TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addInformationOwner(const String &informationOwner)
+{
+    m_string += informationOwner;
+    return *this;
+}
+
 String TrainAnnouncementStringBuilder::build() const
 {
     return m_string;
