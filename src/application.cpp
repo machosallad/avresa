@@ -53,8 +53,6 @@ void Application::updateDisplay()
         String text = builder.addTime(announcement.getAdvertisedTimeAtLocation())
                           .addSpace()
                           .addStationName(TrainAnnouncement::getStationName(announcement.getToLocation()))
-                          .addSpace()
-                          .addTrack(announcement.getTrackAtLocation())
                           .build();
 
         m_display.printText(text, 0, i * 8);
