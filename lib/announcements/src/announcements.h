@@ -16,6 +16,8 @@ public:
 
     void updateAnnouncements(const String &jsonString);
     void printAll() const;
+    TrainAnnouncement getAnnouncement(int index) const;
+    int getNumAnnouncements() const;
 
 private:
     TrainAnnouncement trainAnnouncements[MAX_ANNOUNCEMENTS]; // Array of TrainAnnouncement objects

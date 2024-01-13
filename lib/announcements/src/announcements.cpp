@@ -39,3 +39,15 @@ void Announcements::printAll() const
         trainAnnouncements[i].printAll();
     }
 }
+
+TrainAnnouncement Announcements::getAnnouncement(int index) const
+{
+    if (index < 0 || index >= numAnnouncements)
+        return TrainAnnouncement(); // Return an empty TrainAnnouncement object
+    return trainAnnouncements[index];
+}
+
+int Announcements::getNumAnnouncements() const
+{
+    return numAnnouncements;
+}
