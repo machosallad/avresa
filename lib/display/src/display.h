@@ -28,11 +28,10 @@ public:
     uint16_t color565(Color color);
 
 private:
-    // Add your variables here
     MatrixPanel_I2S_DMA *dma_display = nullptr;
-    const uint16_t matrixWidth = 64;
-    const uint16_t matrixHeight = 32;
-    const uint16_t matrixChainLength = 2;
+    const uint16_t m_matrixWidth = 64;
+    const uint16_t m_matrixHeight = 32;
+    const uint16_t m_matrixChainLength = 2;
 };
 
 #endif // DISPLAY_H

@@ -1,5 +1,5 @@
 #include "wifi_manager.h"
-WiFiManager::WiFiManager(const char *ssid, const char *password) : ssid(ssid), password(password)
+WiFiManager::WiFiManager(const char *ssid, const char *password) : m_ssid(ssid), m_password(password)
 {
     // Constructor body (if needed)
 }
@@ -17,7 +17,7 @@ bool WiFiManager::isConnected()
 void WiFiManager::connectToWifi()
 {
     Serial.println("Connecting to WiFi");
-    WiFi.begin(ssid, password);
+    WiFi.begin(m_ssid, m_password);
 
     while (WiFi.status() != WL_CONNECTED)
     {

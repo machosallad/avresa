@@ -2,7 +2,7 @@
 
 Display::Display()
 {
-    HUB75_I2S_CFG config(matrixWidth, matrixHeight, matrixChainLength);
+    HUB75_I2S_CFG config(m_matrixWidth, m_matrixHeight, m_matrixChainLength);
     // Configure green and blue channels
     config.gpio.b1 = 26;
     config.gpio.b2 = 12;
@@ -72,7 +72,7 @@ void Display::printTextCentered(String text, Color color)
     dma_display->getTextBounds(text, 0, 0, &xOne, &yOne, &w, &h);
 
     int xPosition = dma_display->width() / 2 - w / 2 + 1;
-    dma_display->setCursor(xPosition, 8); // 24 is the middle of the screen
+    dma_display->setCursor(xPosition, 8); // 8 is the middle of the screen
     dma_display->print(text);
 }
 
@@ -96,5 +96,3 @@ void Display::demo()
     dma_display->setCursor(0, 24);
     dma_display->print("22:03 Uppsala");
 }
-
-// Implement your methods here

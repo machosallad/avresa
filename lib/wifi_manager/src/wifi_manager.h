@@ -13,8 +13,8 @@ public:
     bool isConnected();
 
 private:
-    const char *ssid;
-    const char *password;
+    const char *m_ssid;
+    const char *m_password;
 };
 
 #endif // WIFI_MANAGER_H

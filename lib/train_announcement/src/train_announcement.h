@@ -13,9 +13,9 @@ public:
     ~TrainAnnouncement();
 
     String getActivityType();
-    String getAdvertisedTimeAtLocation();
-    String getEstimatedTimeAtLocation();
-    String getInformationOwner();
+    String getAdvertisedTime();
+    String getEstimatedTime();
+    String getOwner();
     String getTrackAtLocation();
     String getFromLocation();
     String getToLocation();
@@ -23,19 +23,19 @@ public:
     bool isDelayed() const;
 
     static String getStationName(const String &stationCode);
-    void updateAnnouncement(const JsonObject &json);
+    void updateAll(const JsonObject &json);
 
 private:
-    String m_ActivityType;
-    String m_AdvertisedTimeAtLocation;
-    String m_EstimatedTimeAtLocation;
-    String m_InformationOwner;
-    String m_TrackAtLocation;
-    String m_FromLocation;
-    String m_ToLocation;
-    bool m_IsDelayed;
+    String m_activityType;
+    String m_advertisedTime;
+    String m_estimatedTime;
+    String m_owner;
+    String m_track;
+    String m_fromLocation;
+    String m_toLocation;
+    bool m_isDelayed;
 
-    static const std::map<String, String> stationMap;
+    static const std::map<String, String> m_stationMap;
 };
 
 #endif // TRAIN_ANNOUNCEMENT_H

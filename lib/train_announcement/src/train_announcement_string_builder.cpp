@@ -2,7 +2,7 @@
 
 TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addTime(const String &time)
 {
-    m_string += time;
+    m_string += time.substring(11, 16);
     return *this;
 }
 
@@ -24,9 +24,9 @@ TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addSpace()
     return *this;
 }
 
-TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addInformationOwner(const String &informationOwner)
+TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addOwner(const String &owner)
 {
-    m_string += informationOwner;
+    m_string += owner;
     return *this;
 }
 

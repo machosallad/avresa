@@ -49,9 +49,11 @@ void Application::updateDisplayInformation()
     {
         TrainAnnouncement announcement = m_announcements.getAnnouncement(i);
         TrainAnnouncementStringBuilder builder;
-        String text = builder.addTime(announcement.getAdvertisedTimeAtLocation())
+        String text = builder.addTime(announcement.getAdvertisedTime())
                           .addSpace()
                           .addStationName(TrainAnnouncement::getStationName(announcement.getToLocation()))
+                          .addSpace()
+                          .addOwner(announcement.getOwner())
                           .build();
 
         m_display.printText(text, 0, i * 8);

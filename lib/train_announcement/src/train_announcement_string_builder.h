@@ -10,7 +10,7 @@ public:
     TrainAnnouncementStringBuilder &addStationName(const String &stationName);
     TrainAnnouncementStringBuilder &addTrack(const String &track);
     TrainAnnouncementStringBuilder &addSpace();
-    TrainAnnouncementStringBuilder &addInformationOwner(const String &informationOwner);
+    TrainAnnouncementStringBuilder &addOwner(const String &informationOwner);
     String build() const;
 
 private:

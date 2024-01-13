@@ -1,6 +1,6 @@
 #include "train_announcement.h"
 
-const std::map<String, String> TrainAnnouncement::stationMap = {
+const std::map<String, String> TrainAnnouncement::m_stationMap = {
     {"Lp", "Linköping"},
     {"Nr", "Norrköping"},
     {"K", "Katrineholm"},
@@ -24,8 +24,8 @@ const std::map<String, String> TrainAnnouncement::stationMap = {
 
 String TrainAnnouncement::getStationName(const String &stationCode)
 {
-    auto it = stationMap.find(stationCode);
-    if (it != stationMap.end())
+    auto it = m_stationMap.find(stationCode);
+    if (it != m_stationMap.end())
     {
         return it->second;
     }
@@ -34,56 +34,56 @@ String TrainAnnouncement::getStationName(const String &stationCode)
 
 TrainAnnouncement::TrainAnnouncement()
 {
-    m_ActivityType = "";
-    m_AdvertisedTimeAtLocation = "";
-    m_EstimatedTimeAtLocation = "";
-    m_InformationOwner = "";
-    m_TrackAtLocation = "";
-    m_FromLocation = "";
-    m_ToLocation = "";
-    m_IsDelayed = false;
+    m_activityType = "";
+    m_advertisedTime = "";
+    m_estimatedTime = "";
+    m_owner = "";
+    m_track = "";
+    m_fromLocation = "";
+    m_toLocation = "";
+    m_isDelayed = false;
 }
 
-void TrainAnnouncement::updateAnnouncement(const JsonObject &json)
+void TrainAnnouncement::updateAll(const JsonObject &json)
 {
     // Print the JSON object in a pretty way
     String prettyJson;
     serializeJsonPretty(json, prettyJson);
     Serial.println(prettyJson);
 
-    m_IsDelayed = true;
-    m_ActivityType = json["ActivityType"].as<String>();
-    m_InformationOwner = json["InformationOwner"].as<String>();
-    m_TrackAtLocation = json["TrackAtLocation"].as<String>();
-    m_AdvertisedTimeAtLocation = json["AdvertisedTimeAtLocation"].as<String>();
+    m_isDelayed = true;
+    m_activityType = json["ActivityType"].as<String>();
+    m_owner = json["InformationOwner"].as<String>();
+    m_track = json["TrackAtLocation"].as<String>();
+    m_advertisedTime = json["AdvertisedTimeAtLocation"].as<String>();
     if (json["EstimatedTimeAtLocation"].isNull())
     {
-        m_IsDelayed = false;
-        m_EstimatedTimeAtLocation = m_AdvertisedTimeAtLocation;
+        m_isDelayed = false;
+        m_estimatedTime = m_advertisedTime;
     }
     else
     {
-        m_EstimatedTimeAtLocation = json["EstimatedTimeAtLocation"].as<String>();
+        m_estimatedTime = json["EstimatedTimeAtLocation"].as<String>();
     }
 
     JsonArray fromLocationArray = json["FromLocation"].as<JsonArray>();
     if (fromLocationArray.size() > 0)
     {
         // The first element in the array is where the train is coming from
-        m_FromLocation = fromLocationArray[0].as<String>();
+        m_fromLocation = fromLocationArray[0].as<String>();
     }
 
     JsonArray toLocationArray = json["ToLocation"].as<JsonArray>();
     if (toLocationArray.size() > 0)
     {
         // The last element in the array is the final destination
-        m_ToLocation = toLocationArray[toLocationArray.size() - 1].as<String>();
+        m_toLocation = toLocationArray[toLocationArray.size() - 1].as<String>();
     }
 }
 
 TrainAnnouncement::TrainAnnouncement(const JsonObject &json)
 {
-    updateAnnouncement(json);
+    updateAll(json);
 }
 
 TrainAnnouncement::~TrainAnnouncement()
@@ -93,53 +93,52 @@ TrainAnnouncement::~TrainAnnouncement()
 
 String TrainAnnouncement::getActivityType()
 {
-    return m_ActivityType;
+    return m_activityType;
 }
 
-String TrainAnnouncement::getAdvertisedTimeAtLocation()
+String TrainAnnouncement::getAdvertisedTime()
 {
-    String hourAndMinute = m_AdvertisedTimeAtLocation.substring(11, 16);
-    return hourAndMinute;
+    return m_advertisedTime;
 }
 
-String TrainAnnouncement::getEstimatedTimeAtLocation()
+String TrainAnnouncement::getEstimatedTime()
 {
-    return m_EstimatedTimeAtLocation;
+    return m_estimatedTime;
 }
 
-String TrainAnnouncement::getInformationOwner()
+String TrainAnnouncement::getOwner()
 {
-    return m_InformationOwner;
+    return m_owner;
 }
 
 String TrainAnnouncement::getTrackAtLocation()
 {
-    return m_TrackAtLocation;
+    return m_track;
 }
 
 String TrainAnnouncement::getFromLocation()
 {
-    return m_FromLocation;
+    return m_fromLocation;
 }
 
 String TrainAnnouncement::getToLocation()
 {
-    return m_ToLocation;
+    return m_toLocation;
 }
 
 void TrainAnnouncement::printAll() const
 {
-    Serial.println("Activity Type: " + m_ActivityType);
-    Serial.println("Advertised Time At Location: " + m_AdvertisedTimeAtLocation);
-    Serial.println("Estimated Time At Location: " + m_EstimatedTimeAtLocation);
-    Serial.println("Is Delayed: " + String(m_IsDelayed));
-    Serial.println("Information Owner: " + m_InformationOwner);
-    Serial.println("Track At Location: " + m_TrackAtLocation);
-    Serial.println("From Location: " + getStationName(m_FromLocation));
-    Serial.println("To Location: " + getStationName(m_ToLocation));
+    Serial.println("Activity Type: " + m_activityType);
+    Serial.println("Advertised Time: " + m_advertisedTime);
+    Serial.println("Estimated Time: " + m_estimatedTime);
+    Serial.println("Is Delayed: " + String(m_isDelayed));
+    Serial.println("Owner: " + m_owner);
+    Serial.println("Track: " + m_track);
+    Serial.println("From Location: " + getStationName(m_fromLocation));
+    Serial.println("To Location: " + getStationName(m_toLocation));
 }
 
 bool TrainAnnouncement::isDelayed() const
 {
-    return m_IsDelayed;
+    return m_isDelayed;
 }
