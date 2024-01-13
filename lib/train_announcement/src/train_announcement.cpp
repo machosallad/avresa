@@ -6,7 +6,7 @@ const std::map<String, String> TrainAnnouncement::stationMap = {
     {"K", "Katrineholm"},
     {"Et", "Eskilstuna"},
     {"Vå", "Västerås"},
-    {"Cst", "Stockholm"},
+    {"Cst", "Stockholm C"},
     {"Arnc", "Arlanda"},
     {"U", "Uppsala"},
     {"Fln", "Falun"},
