@@ -96,7 +96,8 @@ String TrainAnnouncement::getActivityType()
 
 String TrainAnnouncement::getAdvertisedTimeAtLocation()
 {
-    return m_AdvertisedTimeAtLocation;
+    String hourAndMinute = m_AdvertisedTimeAtLocation.substring(11, 16);
+    return hourAndMinute;
 }
 
 String TrainAnnouncement::getEstimatedTimeAtLocation()
