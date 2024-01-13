@@ -69,13 +69,15 @@ void TrainAnnouncement::updateAnnouncement(const JsonObject &json)
     JsonArray fromLocationArray = json["FromLocation"].as<JsonArray>();
     if (fromLocationArray.size() > 0)
     {
+        // The first element in the array is where the train is coming from
         m_FromLocation = fromLocationArray[0].as<String>();
     }
 
     JsonArray toLocationArray = json["ToLocation"].as<JsonArray>();
     if (toLocationArray.size() > 0)
     {
-        m_ToLocation = toLocationArray[0].as<String>();
+        // The last element in the array is the final destination
+        m_ToLocation = toLocationArray[toLocationArray.size() - 1].as<String>();
     }
 }
 
