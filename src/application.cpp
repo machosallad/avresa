@@ -53,7 +53,7 @@ void Application::updateDisplayInformation()
                           .addSpace()
                           .addStationName(TrainAnnouncement::getStationName(announcement.getToLocation()))
                           .addSpace()
-                          .addOwner(announcement.getOwner())
+                          .addEstimatedTime(announcement.getEstimatedTime(), announcement.isDelayed())
                           .build();
 
         m_display.printText(text, 0, i * 8);
