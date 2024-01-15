@@ -30,6 +30,15 @@ TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addOwner(const S
     return *this;
 }
 
+TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addEstimatedTime(const String &estimatedTime, bool isDelayed)
+{
+    if (isDelayed)
+    {
+        m_string += estimatedTime.substring(11, 16);
+    }
+    return *this;
+}
+
 String TrainAnnouncementStringBuilder::build() const
 {
     return m_string;

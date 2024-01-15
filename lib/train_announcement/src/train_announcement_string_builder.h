@@ -11,6 +11,7 @@ public:
     TrainAnnouncementStringBuilder &addTrack(const String &track);
     TrainAnnouncementStringBuilder &addSpace();
     TrainAnnouncementStringBuilder &addOwner(const String &informationOwner);
+    TrainAnnouncementStringBuilder &addEstimatedTime(const String &estimatedTime, bool isDelayed);
     String build() const;
 
 private:
