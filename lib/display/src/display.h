@@ -28,6 +28,7 @@ public:
     uint16_t color565(Color color);
 
 private:
+    void sanitizeText(String &text);
     MatrixPanel_I2S_DMA *dma_display = nullptr;
     const uint16_t m_matrixWidth = 64;
     const uint16_t m_matrixHeight = 32;

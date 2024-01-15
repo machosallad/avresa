@@ -54,10 +54,20 @@ uint16_t Display::color565(Color color)
 
 void Display::printText(String text, int16_t x, int16_t y, Color color)
 {
+    sanitizeText(text);
     dma_display->setTextSize(1); // size 1 == 8 pixels high
     dma_display->setTextColor(this->color565(color));
     dma_display->setCursor(x, y);
     dma_display->print(text);
+}
+
+void Display::sanitizeText(String &text)
+{
+    text.replace("ä", "a");
+    text.replace("ö", "o");
+    text.replace("Å", "A");
+    text.replace("Ä", "A");
+    text.replace("Ö", "O");
 }
 
 void Display::printTextCentered(String text, Color color)
