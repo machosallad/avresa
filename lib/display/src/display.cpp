@@ -63,6 +63,7 @@ void Display::printText(String text, int16_t x, int16_t y, Color color)
 
 void Display::sanitizeText(String &text)
 {
+    text.replace("å", "a");
     text.replace("ä", "a");
     text.replace("ö", "o");
     text.replace("Å", "A");
