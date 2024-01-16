@@ -1,4 +1,6 @@
 #include "display.h"
+#include "fonts/avgang_mini.h"
+#include "fonts/avgang.h"
 
 Display::Display()
 {
@@ -12,7 +14,7 @@ Display::Display()
 
     dma_display = new MatrixPanel_I2S_DMA(config);
     dma_display->begin();
-
+    dma_display->setFont(&AvgangMini);
     dma_display->clearScreen();
     dma_display->fillScreen(MatrixPanel_I2S_DMA::color565(0, 0, 0));
     dma_display->setTextWrap(false);
@@ -63,12 +65,15 @@ void Display::printText(String text, int16_t x, int16_t y, Color color)
 
 void Display::sanitizeText(String &text)
 {
-    text.replace("å", "a");
-    text.replace("ä", "a");
-    text.replace("ö", "o");
-    text.replace("Å", "A");
-    text.replace("Ä", "A");
-    text.replace("Ö", "O");
+    text.replace("å", "|");
+    text.replace("ä", "{");
+    text.replace("ö", "}");
+    text.replace("Å", "]");
+    text.replace("Ä", "[");
+    text.replace("Ö", "^");
+}
+
+}
 }
 
 void Display::printTextCentered(String text, Color color)
