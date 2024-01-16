@@ -9,7 +9,7 @@ String TRAIN_ANNOUNCEMENT_REQUEST(String auth_key, String station_code)
     String xml =
         "<REQUEST>\n"
         "\t<LOGIN authenticationkey='AUTH_KEY_PLACEHOLDER' />\n"
-        "\t<QUERY objecttype='TrainAnnouncement' orderby='AdvertisedTimeAtLocation' schemaversion='1' limit='5'>\n"
+        "\t<QUERY objecttype='TrainAnnouncement' orderby='AdvertisedTimeAtLocation' schemaversion='1' limit='4'>\n"
         "\t\t<FILTER>\n"
         "\t\t\t<AND>\n"
         "\t\t\t\t<OR>\n"
