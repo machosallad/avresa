@@ -31,6 +31,31 @@ void Display::clearScreen()
     dma_display->fillScreen(MatrixPanel_I2S_DMA::color565(0, 0, 0));
 }
 
+void Display::setFont(Font font)
+{
+    switch (font)
+    {
+    case SMALL:
+        dma_display->setFont(&AvgangMini);
+        break;
+    case MEDIUM:
+        dma_display->setFont(&Avgang);
+        break;
+    case LARGE:
+        dma_display->setFont(&Avgang);
+        break;
+    default:
+        dma_display->setFont(&AvgangMini);
+        break;
+    }
+    m_currentFont = font;
+}
+
+Display::Font Display::getFont()
+{
+    return m_currentFont;
+}
+
 uint16_t Display::color565(Color color)
 {
     switch (color)
@@ -57,7 +82,8 @@ uint16_t Display::color565(Color color)
 void Display::printText(String text, int16_t x, int16_t y, Color color)
 {
     sanitizeText(text);
-    dma_display->setTextSize(1); // size 1 == 8 pixels high
+    y += fontSizeInPixels(m_currentFont); // Shift the text down to the baseline based on the font size
+    dma_display->setTextSize(1);          // size 1 == 8 pixels or 12 pixels high depending on the font
     dma_display->setTextColor(this->color565(color));
     dma_display->setCursor(x, y);
     dma_display->print(text);
@@ -73,13 +99,25 @@ void Display::sanitizeText(String &text)
     text.replace("Ö", "^");
 }
 
-}
+uint8_t Display::fontSizeInPixels(Font font)
+{
+    switch (font)
+    {
+    case SMALL:
+        return AvgangMini.yAdvance;
+    case MEDIUM:
+        return Avgang.yAdvance;
+    case LARGE:
+        return Avgang.yAdvance;
+    default:
+        return 8;
+    }
 }
 
 void Display::printTextCentered(String text, Color color)
 {
     dma_display->clearScreen();
-    dma_display->setTextSize(2);
+    dma_display->setTextSize(1);
     dma_display->setTextWrap(false);
     dma_display->setTextColor(this->color565(color));
 
@@ -88,7 +126,7 @@ void Display::printTextCentered(String text, Color color)
     dma_display->getTextBounds(text, 0, 0, &xOne, &yOne, &w, &h);
 
     int xPosition = dma_display->width() / 2 - w / 2 + 1;
-    dma_display->setCursor(xPosition, 8); // 8 is the middle of the screen
+    dma_display->setCursor(xPosition, (m_matrixHeight / 2) + (fontSizeInPixels(m_currentFont) / 4));
     dma_display->print(text);
 }
 
@@ -100,15 +138,15 @@ void Display::demo()
 
     dma_display->setTextSize(1); // size 1 == 8 pixels high
     dma_display->setTextColor(color565(DARK_ORANGE));
-    dma_display->setCursor(0, 0);
+    dma_display->setCursor(0, fontSizeInPixels(m_currentFont));
     dma_display->print("21:00 Stockholm C");
 
-    dma_display->setCursor(0, 8);
+    dma_display->setCursor(0, fontSizeInPixels(m_currentFont) * 2);
     dma_display->print("21:06 Falun");
 
-    dma_display->setCursor(0, 16);
+    dma_display->setCursor(0, fontSizeInPixels(m_currentFont) * 3);
     dma_display->print("21:05 Eskilstuna");
 
-    dma_display->setCursor(0, 24);
+    dma_display->setCursor(0, fontSizeInPixels(m_currentFont) * 4);
     dma_display->print("22:03 Uppsala");
 }
