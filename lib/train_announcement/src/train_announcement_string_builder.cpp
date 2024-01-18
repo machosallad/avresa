@@ -39,6 +39,16 @@ TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addEstimatedTime
     return *this;
 }
 
+TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addCanceled(const bool &isCanceled)
+{
+    Serial.println(isCanceled);
+    if (isCanceled)
+    {
+        m_string += "Inställd";
+    }
+    return *this;
+}
+
 String TrainAnnouncementStringBuilder::build() const
 {
     return m_string;

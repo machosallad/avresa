@@ -42,6 +42,7 @@ TrainAnnouncement::TrainAnnouncement()
     m_fromLocation = "";
     m_toLocation = "";
     m_isDelayed = false;
+    m_isCanceled = false;
 }
 
 void TrainAnnouncement::updateAll(const JsonObject &json)
@@ -56,6 +57,8 @@ void TrainAnnouncement::updateAll(const JsonObject &json)
     m_owner = json["InformationOwner"].as<String>();
     m_track = json["TrackAtLocation"].as<String>();
     m_advertisedTime = json["AdvertisedTimeAtLocation"].as<String>();
+    m_isCanceled = json["Canceled"].as<bool>();
+
     if (json["EstimatedTimeAtLocation"].isNull())
     {
         m_isDelayed = false;
@@ -141,4 +144,9 @@ void TrainAnnouncement::printAll() const
 bool TrainAnnouncement::isDelayed() const
 {
     return m_isDelayed;
+}
+
+bool TrainAnnouncement::isCanceled() const
+{
+    return m_isCanceled;
 }

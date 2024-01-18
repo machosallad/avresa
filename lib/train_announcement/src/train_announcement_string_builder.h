@@ -12,6 +12,7 @@ public:
     TrainAnnouncementStringBuilder &addSpace();
     TrainAnnouncementStringBuilder &addOwner(const String &informationOwner);
     TrainAnnouncementStringBuilder &addEstimatedTime(const String &estimatedTime, bool isDelayed);
+    TrainAnnouncementStringBuilder &addCanceled(const bool &isCanceled);
     String build() const;
 
 private:

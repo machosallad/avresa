@@ -30,6 +30,7 @@ String TRAIN_ANNOUNCEMENT_REQUEST(String auth_key, String station_code)
         "\t\t<INCLUDE>ToLocation</INCLUDE>\n"
         "\t\t<INCLUDE>ActivityType</INCLUDE>\n"
         "\t\t<INCLUDE>EstimatedTimeAtLocation</INCLUDE>\n"
+        "\t\t<INCLUDE>Canceled</INCLUDE>\n"
         "\t</QUERY>\n"
         "</REQUEST>\n";
 

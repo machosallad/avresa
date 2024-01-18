@@ -21,6 +21,7 @@ public:
     String getToLocation();
     void printAll() const;
     bool isDelayed() const;
+    bool isCanceled() const;
 
     static String getStationName(const String &stationCode);
     void updateAll(const JsonObject &json);
@@ -34,6 +35,7 @@ private:
     String m_fromLocation;
     String m_toLocation;
     bool m_isDelayed;
+    bool m_isCanceled;
 
     static const std::map<String, String> m_stationMap;
 };
