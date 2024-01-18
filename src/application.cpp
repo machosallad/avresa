@@ -48,15 +48,21 @@ void Application::updateDisplayInformation()
     for (int i = 0; i < m_announcements.getNumAnnouncements(); ++i)
     {
         TrainAnnouncement announcement = m_announcements.getAnnouncement(i);
-        TrainAnnouncementStringBuilder builder;
-        String text = builder.addTime(announcement.getAdvertisedTime())
-                          .addSpace()
-                          .addStationName(TrainAnnouncement::getStationName(announcement.getToLocation()))
-                          .addSpace()
-                          .addEstimatedTime(announcement.getEstimatedTime(), announcement.isDelayed())
-                          .build();
+        TrainAnnouncementStringBuilder announcementBuilder;
+        TrainAnnouncementStringBuilder informationBuilder;
+        String train = announcementBuilder
+                           .addTime(announcement.getAdvertisedTime())
+                           .addSpace()
+                           .addStationName(TrainAnnouncement::getStationName(announcement.getToLocation()))
+                           .build();
 
-        m_display.printText(text, 0, i * 8);
+        String information = informationBuilder
+                                 .addEstimatedTime(announcement.getEstimatedTime(), announcement.isDelayed())
+                                 .addCanceled(announcement.isCanceled())
+                                 .build();
+
+        m_display.printText(train, 0, i * 8);
+        m_display.printText(information, 90, i * 8);
     }
 }
 
