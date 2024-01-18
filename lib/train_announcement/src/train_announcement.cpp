@@ -50,7 +50,6 @@ void TrainAnnouncement::updateAll(const JsonObject &json)
     // Print the JSON object in a pretty way
     String prettyJson;
     serializeJsonPretty(json, prettyJson);
-    Serial.println(prettyJson);
 
     m_isDelayed = true;
     m_activityType = json["ActivityType"].as<String>();
@@ -139,6 +138,7 @@ void TrainAnnouncement::printAll() const
     Serial.println("Track: " + m_track);
     Serial.println("From Location: " + getStationName(m_fromLocation));
     Serial.println("To Location: " + getStationName(m_toLocation));
+    Serial.println("Is Canceled: " + String(m_isCanceled));
 }
 
 bool TrainAnnouncement::isDelayed() const
