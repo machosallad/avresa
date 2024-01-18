@@ -34,6 +34,7 @@ public:
     void clearScreen();
     void setFont(Font font);
     Font getFont();
+    uint16_t getDisplayWidth();
 
     uint16_t color565(Color color);
 

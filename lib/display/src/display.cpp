@@ -56,6 +56,11 @@ Display::Font Display::getFont()
     return m_currentFont;
 }
 
+uint16_t Display::getDisplayWidth()
+{
+    return m_matrixWidth * m_matrixChainLength;
+}
+
 uint16_t Display::color565(Color color)
 {
     switch (color)
