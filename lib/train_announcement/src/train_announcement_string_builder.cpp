@@ -41,7 +41,6 @@ TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addEstimatedTime
 
 TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addCanceled(const bool &isCanceled)
 {
-    Serial.println(isCanceled);
     if (isCanceled)
     {
         m_string += "Inställd";
