@@ -89,6 +89,22 @@ void Display::printText(String text, int16_t x, int16_t y, Color color)
     dma_display->print(text);
 }
 
+void Display::printTextRightAligned(String text, int16_t x, int16_t y, Color color)
+{
+    sanitizeText(text);
+    y += fontSizeInPixels(m_currentFont); // Shift the text down to the baseline based on the font size
+    dma_display->setTextSize(1);          // size 1 == 8 pixels or 12 pixels high depending on the font
+    dma_display->setTextColor(this->color565(color));
+
+    int16_t xOne, yOne;
+    uint16_t w, h;
+    dma_display->getTextBounds(text, 0, 0, &xOne, &yOne, &w, &h);
+
+    int xPosition = x - w;
+    dma_display->setCursor(xPosition, y);
+    dma_display->print(text);
+}
+
 void Display::sanitizeText(String &text)
 {
     text.replace("å", "|");
