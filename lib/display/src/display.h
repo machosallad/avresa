@@ -31,6 +31,7 @@ public:
     void printText(String text, int16_t x, int16_t y, Color color = Color::DARK_ORANGE);
     void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::DARK_ORANGE);
     void printTextCentered(String text, Color color = Color::DARK_ORANGE);
+    uint8_t getFontHeight();
     void clearScreen();
     void setFont(Font font);
     Font getFont();

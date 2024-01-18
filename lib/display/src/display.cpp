@@ -134,6 +134,10 @@ uint8_t Display::fontSizeInPixels(Font font)
         return 8;
     }
 }
+uint8_t Display::getFontHeight()
+{
+    return fontSizeInPixels(m_currentFont);
+}
 
 void Display::printTextCentered(String text, Color color)
 {

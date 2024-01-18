@@ -61,8 +61,8 @@ void Application::updateDisplayInformation()
                                  .addCanceled(announcement.isCanceled())
                                  .build();
 
-        m_display.printText(train, 0, i * 8);
-        m_display.printTextRightAligned(information, m_display.getDisplayWidth(), i * 8);
+        m_display.printText(train, 0, i * m_display.getFontHeight());
+        m_display.printTextRightAligned(information, m_display.getDisplayWidth(), i * m_display.getFontHeight());
     }
 }
 
