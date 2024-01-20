@@ -19,9 +19,14 @@ void Application::init()
     m_wifiManager.connectToWifi();
     m_display.clearScreen();
     m_display.printTextCentered("Updating");
+
     if (getLatestAnnouncements())
     {
         updateDisplayInformation();
+    }
+    else
+    {
+        m_display.printTextCentered("Failed to update!");
     }
 }
 
@@ -75,6 +80,10 @@ void Application::run()
         if (getLatestAnnouncements())
         {
             updateDisplayInformation();
+        }
+        else
+        {
+            m_display.printTextCentered("Failed to update!");
         }
     }
 }
