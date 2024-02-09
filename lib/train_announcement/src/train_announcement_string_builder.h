@@ -10,9 +10,10 @@ public:
     TrainAnnouncementStringBuilder &addStationName(const String &stationName);
     TrainAnnouncementStringBuilder &addTrack(const String &track);
     TrainAnnouncementStringBuilder &addSpace();
+    TrainAnnouncementStringBuilder &addSpace(bool condition);
     TrainAnnouncementStringBuilder &addOwner(const String &informationOwner);
     TrainAnnouncementStringBuilder &addEstimatedTime(const String &estimatedTime, bool isDelayed);
-    TrainAnnouncementStringBuilder &addCanceled(const bool &isCanceled);
+    TrainAnnouncementStringBuilder &addCanceled(const bool &isCanceled, const String &deviationCode);
     String build() const;
 
 private:

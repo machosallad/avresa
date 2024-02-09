@@ -20,7 +20,8 @@ const std::map<String, String> TrainAnnouncement::m_stationMap = {
     {"Må", "Morgongåva"},
     {"Hy", "Heby"},
     {"Sl", "Sala"},
-    {"Mrc", "Mora"}};
+    {"Mrc", "Mora"},
+    {"Uå", "Umeå C"}};
 
 String TrainAnnouncement::getStationName(const String &stationCode)
 {
@@ -43,6 +44,8 @@ TrainAnnouncement::TrainAnnouncement()
     m_toLocation = "";
     m_isDelayed = false;
     m_isCanceled = false;
+    m_deviationCode = "";
+    m_deviationDescription = "";
 }
 
 void TrainAnnouncement::updateAll(const JsonObject &json)
@@ -66,6 +69,15 @@ void TrainAnnouncement::updateAll(const JsonObject &json)
     else
     {
         m_estimatedTime = json["EstimatedTimeAtLocation"].as<String>();
+    }
+
+    JsonArray deviationArray = json["Deviation"].as<JsonArray>();
+    if (deviationArray.size() > 0)
+    {
+        // The first element in the array is the deviation code
+        m_deviationCode = deviationArray[0].as<String>();
+        // The second element in the array is the deviation description
+        m_deviationDescription = deviationArray[1].as<String>();
     }
 
     JsonArray fromLocationArray = json["FromLocation"].as<JsonArray>();
@@ -128,6 +140,16 @@ String TrainAnnouncement::getToLocation()
     return m_toLocation;
 }
 
+String TrainAnnouncement::getDeviationCode()
+{
+    return m_deviationCode;
+}
+
+String TrainAnnouncement::getDeviationDescription()
+{
+    return m_deviationDescription;
+}
+
 void TrainAnnouncement::printAll() const
 {
     Serial.println("Activity Type: " + m_activityType);
@@ -139,6 +161,8 @@ void TrainAnnouncement::printAll() const
     Serial.println("From Location: " + getStationName(m_fromLocation));
     Serial.println("To Location: " + getStationName(m_toLocation));
     Serial.println("Is Canceled: " + String(m_isCanceled));
+    Serial.println("Deviation Code: " + m_deviationCode);
+    Serial.println("Deviation Description: " + m_deviationDescription);
 }
 
 bool TrainAnnouncement::isDelayed() const

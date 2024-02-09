@@ -24,6 +24,15 @@ TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addSpace()
     return *this;
 }
 
+TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addSpace(bool condition)
+{
+    if (condition)
+    {
+        m_string += " ";
+    }
+    return *this;
+}
+
 TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addOwner(const String &owner)
 {
     m_string += owner;
@@ -39,11 +48,18 @@ TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addEstimatedTime
     return *this;
 }
 
-TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addCanceled(const bool &isCanceled)
+TrainAnnouncementStringBuilder &TrainAnnouncementStringBuilder::addCanceled(const bool &isCanceled, const String &deviationCode)
 {
     if (isCanceled)
     {
-        m_string += "Inställd";
+        if (deviationCode == "Buss ersätter")
+        {
+            m_string += "Buss";
+        }
+        else
+        {
+            m_string += "Inställd";
+        }
     }
     return *this;
 }

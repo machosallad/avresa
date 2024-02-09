@@ -19,6 +19,8 @@ public:
     String getTrackAtLocation();
     String getFromLocation();
     String getToLocation();
+    String getDeviationCode();
+    String getDeviationDescription();
     void printAll() const;
     bool isDelayed() const;
     bool isCanceled() const;
@@ -34,6 +36,8 @@ private:
     String m_track;
     String m_fromLocation;
     String m_toLocation;
+    String m_deviationCode;
+    String m_deviationDescription;
     bool m_isDelayed;
     bool m_isCanceled;
 

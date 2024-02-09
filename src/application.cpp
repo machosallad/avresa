@@ -63,7 +63,8 @@ void Application::updateDisplayInformation()
 
         String information = informationBuilder
                                  .addEstimatedTime(announcement.getEstimatedTime(), announcement.isDelayed())
-                                 .addCanceled(announcement.isCanceled())
+                                 .addSpace(announcement.isDelayed() && announcement.isCanceled())
+                                 .addCanceled(announcement.isCanceled(), announcement.getDeviationCode())
                                  .build();
 
         m_display.printText(train, 0, i * m_display.getFontHeight());
