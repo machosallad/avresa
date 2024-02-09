@@ -15,6 +15,7 @@ public:
     ~Application();
     void init();
     void run();
+    void showSplashScreen();
 
 private:
     bool getLatestAnnouncements();

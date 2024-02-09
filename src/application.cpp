@@ -15,9 +15,9 @@ Application::~Application()
 void Application::init()
 {
     // Fire up the system by connecting to WiFi and fetching the latest announcements
+    showSplashScreen();
     m_display.printTextCentered("Connecting");
     m_wifiManager.connectToWifi();
-    m_display.clearScreen();
     m_display.printTextCentered("Updating");
 
     if (getLatestAnnouncements())
@@ -86,4 +86,17 @@ void Application::run()
             m_display.printTextCentered("Failed to update!");
         }
     }
+
+    if (!m_wifiManager.isConnected())
+    {
+        m_display.printTextCentered("WiFi disconnected!");
+    }
+}
+
+void Application::showSplashScreen()
+{
+    m_display.clearScreen();
+    m_display.printTextCentered("MakerMelin", Display::Color::GREEN);
+    delay(2000);
+    m_display.clearScreen();
 }
