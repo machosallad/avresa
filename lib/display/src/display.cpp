@@ -61,6 +61,16 @@ uint16_t Display::getDisplayWidth()
     return m_matrixWidth * m_matrixChainLength;
 }
 
+void Display::setBrightness(uint8_t brightness)
+{
+    // Limit the brightness to max 128
+    if (brightness > 128)
+    {
+        brightness = 128;
+    }
+    dma_display->setBrightness(brightness);
+}
+
 uint16_t Display::color565(Color color)
 {
     switch (color)

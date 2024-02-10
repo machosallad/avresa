@@ -36,6 +36,7 @@ public:
     void setFont(Font font);
     Font getFont();
     uint16_t getDisplayWidth();
+    void setBrightness(uint8_t brightness);
 
     uint16_t color565(Color color);
 
