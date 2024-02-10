@@ -7,6 +7,7 @@
 #include "wifi_manager.h"
 #include "train_station_announcements.h"
 #include "display.h"
+#include "settings.h"
 
 class Application
 {
@@ -27,6 +28,7 @@ private:
     WiFiManager m_wifiManager;
     Display m_display;
     TrainStationAnnouncements m_announcements;
+    WebServer m_webServer;
 };
 
 #endif // APPLICATION_H

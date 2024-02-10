@@ -14,10 +14,12 @@ Application::~Application()
 
 void Application::init()
 {
-    // Fire up the system by connecting to WiFi and fetching the latest announcements
+    // Fire up the system by connecting to WiFi, coniguring the Web server and fetching the latest announcements
     showSplashScreen();
     m_display.printTextCentered("Connecting");
     m_wifiManager.connectToWifi();
+    m_webServer.init();
+    m_webServer.registerObserver(Setting::Brightness, std::bind(&Display::setBrightness, &m_display, std::placeholders::_1));
     m_display.printTextCentered("Updating");
 
     if (getLatestAnnouncements())
