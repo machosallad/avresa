@@ -2,8 +2,8 @@
 #include "trafikverket_client.h"
 #include "xml_requests.h"
 
-TrafikverketClient::TrafikverketClient(const String &authKey, const String &serverUrl)
-    : m_authKey(authKey), m_serverUrl(serverUrl)
+TrafikverketClient::TrafikverketClient(const String &authKey, const String &serverUrl, const String &stationCode)
+    : m_authKey(authKey), m_serverUrl(serverUrl), m_stationCode(stationCode)
 {
     // Constructor implementation
 }
@@ -38,6 +38,16 @@ String TrafikverketClient::getTrainAnnouncements(const String &stationCode)
     http.end();
 
     return response;
+}
+
+String TrafikverketClient::getTrainAnnouncements()
+{
+    return getTrainAnnouncements(m_stationCode);
+}
+
+void TrafikverketClient::setStationCode(const String &stationCode)
+{
+    m_stationCode = stationCode;
 }
 
 // Implement your methods here

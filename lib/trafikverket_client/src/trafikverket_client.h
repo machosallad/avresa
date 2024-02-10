@@ -5,14 +5,17 @@
 class TrafikverketClient
 {
 public:
-    TrafikverketClient(const String &serverKey, const String &serverUrl);
+    TrafikverketClient(const String &serverKey, const String &serverUrl, const String &stationCode);
     ~TrafikverketClient();
 
     String getTrainAnnouncements(const String &stationCode);
+    String getTrainAnnouncements();
+    void setStationCode(const String &stationCode);
 
 private:
     String m_authKey;
     String m_serverUrl;
+    String m_stationCode;
 };
 
 #endif // TRAFIKVERKET_CLIENT_H

@@ -11,7 +11,7 @@ class WebServer
 {
 public:
     using CallbackInt = std::function<void(uint8_t)>;
-    using CallbackString = std::function<void(std::string)>;
+    using CallbackString = std::function<void(String)>;
 
     WebServer();
     ~WebServer();

@@ -2,7 +2,7 @@
 #include "config.h"
 #include "train_announcement_string_builder.h"
 
-Application::Application() : m_trafikverketClient(SERVER_KEY, SERVER_URL), m_wifiManager(WIFI_SSID, WIFI_PASSWORD)
+Application::Application() : m_trafikverketClient(SERVER_KEY, SERVER_URL, STATION_CODE), m_wifiManager(WIFI_SSID, WIFI_PASSWORD)
 {
     // Constructor
 }
@@ -20,6 +20,7 @@ void Application::init()
     m_wifiManager.connectToWifi();
     m_webServer.init();
     m_webServer.registerObserver(Setting::Brightness, std::bind(&Display::setBrightness, &m_display, std::placeholders::_1));
+    m_webServer.registerObserver(Setting::StationCode, std::bind(&TrafikverketClient::setStationCode, &m_trafikverketClient, std::placeholders::_1));
     m_display.printTextCentered("Updating");
 
     if (getLatestAnnouncements())
@@ -37,7 +38,7 @@ bool Application::getLatestAnnouncements()
     bool status = false;
     if (m_wifiManager.isConnected())
     {
-        String response = m_trafikverketClient.getTrainAnnouncements(STATION_CODE);
+        String response = m_trafikverketClient.getTrainAnnouncements();
         m_announcements.updateAnnouncements(response);
         status = true;
     }
