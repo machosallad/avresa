@@ -48,6 +48,7 @@ private:
     const uint16_t m_matrixWidth = 64;
     const uint16_t m_matrixHeight = 32;
     const uint16_t m_matrixChainLength = 2;
+    const uint8_t m_maxBrightness = 128;
 };
 
 #endif // DISPLAY_H

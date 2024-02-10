@@ -64,9 +64,9 @@ uint16_t Display::getDisplayWidth()
 void Display::setBrightness(uint8_t brightness)
 {
     // Limit the brightness to max 128
-    if (brightness > 128)
+    if (brightness > m_maxBrightness)
     {
-        brightness = 128;
+        brightness = m_maxBrightness;
     }
     dma_display->setBrightness(brightness);
 }
