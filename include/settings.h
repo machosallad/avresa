@@ -15,5 +15,6 @@ enum class Setting
     Font,            /**< Font setting. */
     StationCode,     /**< Station code setting. */
     RequestInterval, /**< Request interval setting. */
-    Layout           /**< Layout setting. */
+    Layout,          /**< Layout setting. */
+    Color            /**< Color setting. */
 };

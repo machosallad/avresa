@@ -2,6 +2,8 @@
 #define WEB_SERVER_H
 
 #include "ESPAsyncWebServer.h"
+#include "AsyncJson.h"
+#include "ArduinoJson.h"
 #include "settings.h"
 #include <map>
 
@@ -21,6 +23,8 @@ public:
 private:
     void handleRequest(Setting setting, uint8_t value);
     void handleRequest(Setting setting, const String &value);
+    void handleSettingUpdate(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total, Setting setting);
+    void notFound(AsyncWebServerRequest *request);
 
     AsyncWebServer m_server;
     std::map<Setting, std::vector<CallbackInt>> m_observersInt;
