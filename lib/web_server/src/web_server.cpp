@@ -1,5 +1,51 @@
 #include "web_server.h"
 
+const char index_html[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>Avresa</title>
+    <script>
+        function updateSetting(setting, value) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/setting/" + setting, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({ value: value }));
+        }
+    </script>
+</head>
+<body class="bg-dark text-white">
+    <div class="container">
+        <h1 class="mt-4">Avresa</h1>
+        <div class="my-4">
+            <h2>Brightness</h2>
+            <input type="range" min="0" max="100" value="50" class="custom-range" id="brightness" onchange="updateSetting('brightness', Number(this.value))">
+        </div>
+        <div class="my-4">
+            <h2>Color</h2>
+            <select class="custom-select bg-secondary text-white" id="color" onchange="updateSetting('color', this.value)">
+                <option value="yellow">Yellow</option>
+                <option value="red">Red</option>
+                <option value="green">Green</option>
+            </select>
+        </div>
+        <div class="my-4">
+            <h2>Station</h2>
+            <select class="custom-select bg-secondary text-white" id="stationCode" onchange="updateSetting('stationCode', this.value)">
+                <option value="Sl">Sala</option>
+                <option value="U">Uppsala</option>
+                <option value="Vå">Västerås</option>
+                <option value="Cst">Stockholm C</option>
+            </select>
+        </div>
+    </div>
+</body>
+</html>
+)rawliteral";
+
 WebServer::WebServer() : m_server(80)
 {
     // Constructor implementation
@@ -14,52 +60,7 @@ void WebServer::init()
 {
     // Serve the HTML page
     m_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-                {
-                    String html;
-                    html += "<!DOCTYPE html>\n";
-                    html += "<html lang=\"en\">\n";
-                    html += "<head>\n";
-                    html += "    <meta charset=\"UTF-8\">\n";
-                    html += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n";
-                    html += "    <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css\">\n";
-                    html += "    <title>Avresa</title>\n";
-                    html += "    <script>\n";
-                    html += "        function updateSetting(setting, value) {\n";
-                    html += "            var xhr = new XMLHttpRequest();\n";
-                    html += "            xhr.open(\"POST\", \"/setting/\" + setting, true);\n";
-                    html += "            xhr.setRequestHeader('Content-Type', 'application/json');\n";
-                    html += "            xhr.send(JSON.stringify({ value: value }));\n";
-                    html += "        }\n";
-                    html += "    </script>\n";
-                    html += "</head>\n";
-                    html += "<body class=\"bg-dark text-white\">\n";
-                    html += "    <div class=\"container\">\n";
-                    html += "        <h1 class=\"mt-4\">Avresa</h1>\n";
-                    html += "        <div class=\"my-4\">\n";
-                    html += "            <h2>Brightness</h2>\n";
-                    html += "            <input type=\"range\" min=\"0\" max=\"100\" value=\"50\" class=\"custom-range\" id=\"brightness\" onchange=\"updateSetting('brightness', Number(this.value))\">\n";
-                    html += "        </div>\n";
-                    html += "        <div class=\"my-4\">\n";
-                    html += "            <h2>Color</h2>\n";
-                    html += "            <select class=\"custom-select bg-secondary text-white\" id=\"color\" onchange=\"updateSetting('color', this.value)\">\n";
-                    html += "                <option value=\"yellow\">Yellow</option>\n";
-                    html += "                <option value=\"red\">Red</option>\n";
-                    html += "                <option value=\"green\">Green</option>\n";
-                    html += "            </select>\n";
-                    html += "        </div>\n";
-                    html += "        <div class=\"my-4\">\n";
-                    html += "            <h2>Station</h2>\n";
-                    html += "            <select class=\"custom-select bg-secondary text-white\" id=\"stationCode\" onchange=\"updateSetting('stationCode', this.value)\">\n";
-                    html += "                <option value=\"Sl\">Sala</option>\n";
-                    html += "                <option value=\"U\">Uppsala</option>\n";
-                    html += "                <option value=\"Vå\">Västerås</option>\n";
-                    html += "                <option value=\"Cst\">Stockholm C</option>\n";
-                    html += "            </select>\n";
-                    html += "        </div>\n";
-                    html += "    </div>\n";
-                    html += "</body>\n";
-                    html += "</html>\n";
-            request->send(200, "text/html", html); });
+                { request->send(200, "text/html", FPSTR(index_html)); });
 
     m_server.onNotFound([this](AsyncWebServerRequest *request)
                         { notFound(request); });
