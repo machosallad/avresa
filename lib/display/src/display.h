@@ -17,14 +17,16 @@ public:
         GREEN,
         BLUE,
         YELLOW,
-        DARK_ORANGE
+        DARK_ORANGE,
+        NUMBER_OF_COLORS
     };
 
     enum Font
     {
         SMALL,
         MEDIUM,
-        LARGE
+        LARGE,
+        NUMBER_OF_FONTS
     };
 
     void demo();
