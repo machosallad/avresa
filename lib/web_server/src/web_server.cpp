@@ -15,6 +15,11 @@ const char index_html[] PROGMEM = R"rawliteral(
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.send(JSON.stringify({ value: value }));
         }
+        function reloadAnnouncements() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/reload", true);
+            xhr.send();
+        }
     </script>
 </head>
 <body class="bg-dark text-white">
@@ -40,6 +45,10 @@ const char index_html[] PROGMEM = R"rawliteral(
                 <option value="Vå">Västerås</option>
                 <option value="Cst">Stockholm C</option>
             </select>
+        </div>
+        <div class="my-4">
+            <h2>Announcements</h2>
+            <button class="btn btn-light" onclick="reloadAnnouncements()">Reload</button>
         </div>
     </div>
 </body>
@@ -76,6 +85,11 @@ void WebServer::init()
     m_server.on(
         "/setting/brightness", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
         { handleSettingUpdate(request, data, len, index, total, Setting::Brightness); });
+
+    m_server.on(
+        "/reload", HTTP_GET, [this](AsyncWebServerRequest *request)
+        { handleReloadRequest(); 
+        request->send(200, "text/plain", "OK"); });
 
     // Start the server
     m_server.begin();
@@ -125,6 +139,11 @@ void WebServer::registerObserver(Setting setting, CallbackString observer)
     m_observersString[setting].push_back(observer);
 }
 
+void WebServer::registerReloadObserver(CallbackVoid observer)
+{
+    m_reloadObservers.push_back(observer);
+}
+
 void WebServer::handleRequest(Setting setting, uint8_t value)
 {
     for (auto &observer : m_observersInt[setting])
@@ -138,5 +157,13 @@ void WebServer::handleRequest(Setting setting, const String &value)
     for (auto &observer : m_observersString[setting])
     {
         observer(value.c_str());
+    }
+}
+
+void WebServer::handleReloadRequest()
+{
+    for (auto &observer : m_reloadObservers)
+    {
+        observer();
     }
 }

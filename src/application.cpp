@@ -21,6 +21,7 @@ void Application::init()
     m_webServer.init();
     m_webServer.registerObserver(Setting::Brightness, std::bind(&Display::setBrightness, &m_display, std::placeholders::_1));
     m_webServer.registerObserver(Setting::StationCode, std::bind(&TrafikverketClient::setStationCode, &m_trafikverketClient, std::placeholders::_1));
+    m_webServer.registerReloadObserver(std::bind(&Application::loadTrainStationAnnouncements, this));
     m_display.printTextCentered("Updating");
 
     if (getLatestAnnouncements())
@@ -75,20 +76,25 @@ void Application::updateDisplayInformation()
     }
 }
 
+void Application::loadTrainStationAnnouncements()
+{
+    if (getLatestAnnouncements())
+    {
+        updateDisplayInformation();
+    }
+    else
+    {
+        m_display.printTextCentered("Failed to update!");
+    }
+}
+
 void Application::run()
 {
     unsigned long currentTime = millis();
     if (currentTime - lastRequestTime >= requestInterval)
     {
         lastRequestTime = currentTime;
-        if (getLatestAnnouncements())
-        {
-            updateDisplayInformation();
-        }
-        else
-        {
-            m_display.printTextCentered("Failed to update!");
-        }
+        loadTrainStationAnnouncements();
     }
 
     if (!m_wifiManager.isConnected())

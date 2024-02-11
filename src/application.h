@@ -21,6 +21,7 @@ public:
 private:
     bool getLatestAnnouncements();
     void updateDisplayInformation();
+    void loadTrainStationAnnouncements();
     unsigned long lastRequestTime = 0;            // When the last request was made
     const unsigned long requestInterval = 300000; // Request interval (5 minutes)
     TrafikverketClient m_trafikverketClient;
