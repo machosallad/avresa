@@ -23,7 +23,9 @@ const std::map<String, String> TrainAnnouncement::m_stationMap = {
     {"Mrc", "Mora"},
     {"Uå", "Umeå C"},
     {"M", "Malmö C"},
-    {"Du", "Duved"}};
+    {"Du", "Duved"},
+    {"Hpbg", "Hallsberg"},
+    {"G", "Göteborg C"}};
 
 String TrainAnnouncement::getStationName(const String &stationCode)
 {
