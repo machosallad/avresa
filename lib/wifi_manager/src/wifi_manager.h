@@ -11,6 +11,7 @@ public:
 
     void connectToWifi();
     bool isConnected();
+    String getIpAddress();
 
 private:
     const char *m_ssid;

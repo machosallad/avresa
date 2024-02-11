@@ -14,6 +14,11 @@ bool WiFiManager::isConnected()
     return WiFi.status() == WL_CONNECTED;
 }
 
+String WiFiManager::getIpAddress()
+{
+    return WiFi.localIP().toString();
+}
+
 void WiFiManager::connectToWifi()
 {
     Serial.println("Connecting to WiFi");
@@ -24,6 +29,8 @@ void WiFiManager::connectToWifi()
         delay(500);
         Serial.print(".");
     }
+
+    WiFi.setAutoReconnect(true);
 
     Serial.println("Connected to WiFi");
 }
