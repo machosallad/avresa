@@ -20,6 +20,7 @@ public:
     void showSplashScreen();
 
 private:
+    bool loadStationNames();
     bool getLatestAnnouncements();
     void updateDisplayInformation();
     void loadTrainStationAnnouncements();

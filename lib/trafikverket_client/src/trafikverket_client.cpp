@@ -50,4 +50,29 @@ void TrafikverketClient::setStationCode(const String &stationCode)
     m_stationCode = stationCode;
 }
 
+String TrafikverketClient::getTrainStations()
+{
+    HTTPClient http;
+    String response = "";
+    http.begin(m_serverUrl);
+    http.addHeader("Content-Type", "text/xml");
+    String body = TRAIN_STATIONS_REQUEST(m_authKey);
+
+    int httpResponseCode = http.POST(body);
+    if (httpResponseCode > 0)
+    {
+        Serial.print("HTTP Response code: ");
+        Serial.println(httpResponseCode);
+        response = http.getString();
+    }
+    else
+    {
+        Serial.print("Error code: ");
+        Serial.println(httpResponseCode);
+    }
+    http.end();
+
+    return response;
+}
+
 // Implement your methods here

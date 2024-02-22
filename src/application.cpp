@@ -34,6 +34,24 @@ void Application::init()
     }
 }
 
+bool Application::loadStationNames()
+{
+    bool status = false;
+    if (m_wifiManager.isConnected())
+    {
+        String response = m_trafikverketClient.getTrainStations();
+        Serial.println("Successfully loaded station names");
+        m_announcements.updateStationNames(response);
+        status = true;
+    }
+    else
+    {
+        Serial.println("WiFi Disconnected");
+        status = false;
+    }
+    return status;
+}
+
 bool Application::getLatestAnnouncements()
 {
     bool status = false;

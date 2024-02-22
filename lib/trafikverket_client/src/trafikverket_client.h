@@ -11,6 +11,7 @@ public:
     String getTrainAnnouncements(const String &stationCode);
     String getTrainAnnouncements();
     void setStationCode(const String &stationCode);
+    String getTrainStations();
 
 private:
     String m_authKey;
