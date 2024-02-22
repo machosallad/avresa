@@ -39,4 +39,25 @@ String TRAIN_ANNOUNCEMENT_REQUEST(String auth_key, String station_code)
     xml.replace("STATION_CODE_PLACEHOLDER", station_code);
     return xml;
 }
+
+String TRAIN_STATIONS_REQUEST(String auth_key)
+{
+    String xml =
+        "<REQUEST>\n"
+        "\t<LOGIN authenticationkey='AUTH_KEY_PLACEHOLDER' />\n"
+        "\t<QUERY objecttype='TrainStation' schemaversion='1'>\n"
+        "\t\t<FILTER>\n"
+        "\t\t\t<AND>\n"
+        "\t\t\t\t<EQ name='Prognosticated' value='true'/>\n"
+        "\t\t\t</AND>\n"
+        "\t\t</FILTER>\n"
+        "\t\t<INCLUDE>AdvertisedLocationName</INCLUDE>\n"
+        "\t\t<INCLUDE>LocationSignature</INCLUDE>\n"
+        "\t</QUERY>\n"
+        "</REQUEST>\n";
+
+    xml.replace("AUTH_KEY_PLACEHOLDER", auth_key);
+    return xml;
+}
+
 #endif // REQUESTS_H
