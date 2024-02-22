@@ -62,7 +62,7 @@ void Application::updateDisplayInformation()
         String train = announcementBuilder
                            .addTime(announcement.getAdvertisedTime())
                            .addSpace()
-                           .addStationName(TrainAnnouncement::getStationName(announcement.getToLocation()))
+                           .addStationName(StationLookup::getInstance().getStationName(announcement.getToLocation()))
                            .build();
 
         String information = informationBuilder

@@ -8,6 +8,7 @@
 #include "train_station_announcements.h"
 #include "display.h"
 #include "settings.h"
+#include "station_lockup.h"
 
 class Application
 {
