@@ -113,7 +113,6 @@ void TrainStationAnnouncements::updateStationNames(const String &jsonString)
 
         // Move to the next element
         elementStart = jsonString.indexOf('{', elementEnd);
-        Serial.println("{\"" + stationCode + "\",\"" + stationName + "\"},");
     }
 
     Serial.println("Number of stations: " + String(m_stationNames.size()) + " stations.");
