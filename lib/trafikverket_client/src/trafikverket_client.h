@@ -14,6 +14,7 @@ public:
     String getTrainStations();
 
 private:
+    String sendHttpRequest(const String &serverUrl, const String &body);
     String m_authKey;
     String m_serverUrl;
     String m_stationCode;
