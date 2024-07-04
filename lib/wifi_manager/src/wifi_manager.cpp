@@ -33,6 +33,8 @@ void WiFiManager::connectToWifi()
     WiFi.setAutoReconnect(true);
 
     Serial.println("Connected to WiFi");
+    Serial.print("IP Address: ");
+    Serial.println(getIpAddress());
 }
 
 // Implement your methods here
