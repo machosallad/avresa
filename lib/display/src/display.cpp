@@ -2,14 +2,27 @@
 #include "fonts/avgang_mini.h"
 #include "fonts/avgang.h"
 
-Display::Display()
+Display::Display() : m_matrixWidth(64), m_matrixHeight(32), m_matrixChainLength(2), m_maxBrightness(128)
+{
+}
+
+Display::~Display()
+{
+    // Destructor implementation
+}
+
+void Display::init(int uuid)
 {
     HUB75_I2S_CFG config(m_matrixWidth, m_matrixHeight, m_matrixChainLength);
+
     // Configure green and blue channels
-    config.gpio.b1 = 26;
-    config.gpio.b2 = 12;
-    config.gpio.g1 = 27;
-    config.gpio.g2 = 13;
+    if (uuid != 1)
+    {
+        config.gpio.b1 = 26;
+        config.gpio.b2 = 12;
+        config.gpio.g1 = 27;
+        config.gpio.g2 = 13;
+    }
     config.clkphase = false;
 
     dma_display = new MatrixPanel_I2S_DMA(config);
@@ -18,11 +31,6 @@ Display::Display()
     dma_display->clearScreen();
     dma_display->fillScreen(MatrixPanel_I2S_DMA::color565(0, 0, 0));
     dma_display->setTextWrap(false);
-}
-
-Display::~Display()
-{
-    // Destructor implementation
 }
 
 void Display::clearScreen()

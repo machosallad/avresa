@@ -30,6 +30,7 @@ public:
         NUMBER_OF_FONTS
     };
 
+    void init(int uuid);
     void demo();
     void printText(String text, int16_t x, int16_t y, Color color = Color::AMBER);
     void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::AMBER);
@@ -48,10 +49,10 @@ private:
     uint8_t fontSizeInPixels(Font font);
     MatrixPanel_I2S_DMA *dma_display = nullptr;
     Font m_currentFont = Font::SMALL;
-    const uint16_t m_matrixWidth = 64;
-    const uint16_t m_matrixHeight = 32;
-    const uint16_t m_matrixChainLength = 2;
-    const uint8_t m_maxBrightness = 128;
+    const uint16_t m_matrixWidth;
+    const uint16_t m_matrixHeight;
+    const uint16_t m_matrixChainLength;
+    const uint8_t m_maxBrightness;
 };
 
 #endif // DISPLAY_H
