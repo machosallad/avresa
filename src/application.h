@@ -9,6 +9,7 @@
 #include "display.h"
 #include "settings.h"
 #include "station_lockup.h"
+#include "eeprom_manager.h"
 
 class Application
 {
@@ -36,6 +37,7 @@ private:
     Display m_display;
     TrainStationAnnouncements m_announcements;
     WebServer m_webServer;
+    EEPROMManager m_eepromManager{64, 0};
 };
 
 #endif // APPLICATION_H
