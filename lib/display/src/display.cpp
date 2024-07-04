@@ -87,8 +87,10 @@ uint16_t Display::color565(Color color)
         return MatrixPanel_I2S_DMA::color565(0, 0, 255);
     case YELLOW:
         return MatrixPanel_I2S_DMA::color565(255, 255, 0);
-    case DARK_ORANGE:
+    case AMBER:
         return MatrixPanel_I2S_DMA::color565(255, 140, 0);
+    case ORANGE:
+        return MatrixPanel_I2S_DMA::color565(255, 100, 0);
     default:
         return MatrixPanel_I2S_DMA::color565(0, 0, 0);
     }
@@ -172,7 +174,7 @@ void Display::demo()
     dma_display->setTextWrap(false);
 
     dma_display->setTextSize(1); // size 1 == 8 pixels high
-    dma_display->setTextColor(color565(DARK_ORANGE));
+    dma_display->setTextColor(color565(AMBER));
     dma_display->setCursor(0, fontSizeInPixels(m_currentFont));
     dma_display->print("21:00 Stockholm C");
 

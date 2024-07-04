@@ -17,7 +17,8 @@ public:
         GREEN,
         BLUE,
         YELLOW,
-        DARK_ORANGE,
+        AMBER,
+        ORANGE,
         NUMBER_OF_COLORS
     };
 
@@ -30,9 +31,9 @@ public:
     };
 
     void demo();
-    void printText(String text, int16_t x, int16_t y, Color color = Color::DARK_ORANGE);
-    void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::DARK_ORANGE);
-    void printTextCentered(String text, Color color = Color::DARK_ORANGE);
+    void printText(String text, int16_t x, int16_t y, Color color = Color::AMBER);
+    void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::AMBER);
+    void printTextCentered(String text, Color color = Color::AMBER);
     uint8_t getFontHeight();
     void clearScreen();
     void setFont(Font font);
