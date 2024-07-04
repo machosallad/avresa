@@ -54,24 +54,21 @@ bool Application::loadStationNames()
 
 bool Application::getLatestAnnouncements()
 {
-    bool status = false;
-    if (m_wifiManager.isConnected())
-    {
-        String response = m_trafikverketClient.getTrainAnnouncements();
-        m_announcements.updateAnnouncements(response);
-        status = true;
-    }
-    else
-    {
-        Serial.println("WiFi Disconnected");
-        status = false;
-    }
-    return status;
+    String response = m_trafikverketClient.getTrainAnnouncements();
+    if (response.length() == 0)
+        return false;
+
+    m_announcements.updateAnnouncements(response);
+    return true;
 }
 
 void Application::updateDisplayInformation()
 {
-    m_display.clearScreen();
+    if (m_announcements.getNumAnnouncements() == 0)
+    {
+        m_display.printTextCentered("No departures");
+    }
+
     for (int i = 0; i < m_announcements.getNumAnnouncements(); ++i)
     {
         TrainAnnouncement announcement = m_announcements.getAnnouncement(i);
@@ -89,6 +86,10 @@ void Application::updateDisplayInformation()
                                  .addCanceled(announcement.isCanceled(), announcement.getDeviationCode())
                                  .build();
 
+        // Clear the display before the first announcement is printed
+        if (i == 0)
+            m_display.clearScreen();
+
         m_display.printText(train, 0, i * m_display.getFontHeight());
         m_display.printTextRightAligned(information, m_display.getDisplayWidth(), i * m_display.getFontHeight());
     }
@@ -99,20 +100,44 @@ void Application::loadTrainStationAnnouncements()
     if (getLatestAnnouncements())
     {
         updateDisplayInformation();
+        fetchErrorOccured = false;
     }
     else
     {
-        m_display.printTextCentered("Failed to update!");
+        m_display.printTextCentered("Error: " + m_trafikverketClient.getLastResponseCode());
+        fetchErrorOccured = true;
+    }
+}
+
+unsigned long Application::getRequestInterval()
+{
+    // If an error occurred, request data more frequently using backoff strategy
+    if (fetchErrorOccured)
+    {
+        // Increase the request interval exponentially
+        errorRequestInterval *= 2;
+        if (errorRequestInterval > requestInterval)
+        {
+            errorRequestInterval = requestInterval;
+        }
+        return errorRequestInterval;
+    }
+    else
+    {
+        // Reset the request interval to the initial value
+        errorRequestInterval = 1000;
+        return requestInterval;
     }
 }
 
 void Application::run()
 {
     unsigned long currentTime = millis();
-    if (currentTime - lastRequestTime >= requestInterval)
+    if (currentTime - lastRequestTime >= nextRequestInterval)
     {
         lastRequestTime = currentTime;
         loadTrainStationAnnouncements();
+        nextRequestInterval = getRequestInterval();
     }
 
     if (!m_wifiManager.isConnected())

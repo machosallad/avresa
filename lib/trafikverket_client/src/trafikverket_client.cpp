@@ -3,7 +3,7 @@
 #include "xml_requests.h"
 
 TrafikverketClient::TrafikverketClient(const String &authKey, const String &serverUrl, const String &stationCode)
-    : m_authKey(authKey), m_serverUrl(serverUrl), m_stationCode(stationCode)
+    : m_authKey(authKey), m_serverUrl(serverUrl), m_stationCode(stationCode), m_lastResponseCode(0)
 {
     // Constructor implementation
 }
@@ -22,6 +22,11 @@ String TrafikverketClient::getTrainAnnouncements(const String &stationCode)
 String TrafikverketClient::getTrainAnnouncements()
 {
     return getTrainAnnouncements(m_stationCode);
+}
+
+int TrafikverketClient::getLastResponseCode()
+{
+    return m_lastResponseCode;
 }
 
 void TrafikverketClient::setStationCode(const String &stationCode)
@@ -43,7 +48,9 @@ String TrafikverketClient::sendHttpRequest(const String &serverUrl, const String
     http.addHeader("Content-Type", "text/xml");
 
     int httpResponseCode = http.POST(body);
-    if (httpResponseCode > 0)
+    m_lastResponseCode = httpResponseCode;
+
+    if (httpResponseCode == 200)
     {
         Serial.print("HTTP Response code: ");
         Serial.println(httpResponseCode);

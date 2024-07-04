@@ -10,6 +10,7 @@ public:
 
     String getTrainAnnouncements(const String &stationCode);
     String getTrainAnnouncements();
+    int getLastResponseCode();
     void setStationCode(const String &stationCode);
     String getTrainStations();
 
@@ -18,6 +19,7 @@ private:
     String m_authKey;
     String m_serverUrl;
     String m_stationCode;
+    int m_lastResponseCode = 0;
 };
 
 #endif // TRAFIKVERKET_CLIENT_H

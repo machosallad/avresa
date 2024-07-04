@@ -16,6 +16,7 @@ public:
     Application();
     ~Application();
     void init();
+    unsigned long getRequestInterval();
     void run();
     void showSplashScreen();
 
@@ -26,6 +27,9 @@ private:
     void loadTrainStationAnnouncements();
     unsigned long lastRequestTime = 0;            // When the last request was made
     const unsigned long requestInterval = 300000; // Request interval (5 minutes)
+    unsigned long errorRequestInterval = 1000;
+    unsigned long nextRequestInterval = requestInterval;
+    bool fetchErrorOccured = false;
     TrafikverketClient m_trafikverketClient;
     ContentManager m_contentManager;
     WiFiManager m_wifiManager;
