@@ -16,7 +16,7 @@ class Application
 public:
     Application();
     ~Application();
-    void init();
+    void init(uint8_t uuid);
     unsigned long getRequestInterval();
     void run();
     void showSplashScreen();
@@ -37,7 +37,6 @@ private:
     Display m_display;
     TrainStationAnnouncements m_announcements;
     WebServer m_webServer;
-    EEPROMManager m_eepromManager{64, 0};
 };
 
 #endif // APPLICATION_H
