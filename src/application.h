@@ -16,7 +16,7 @@ class Application
 public:
     Application();
     ~Application();
-    void init(uint8_t uuid);
+    void init(uint8_t displayType);
     unsigned long getRequestInterval();
     void run();
     void showSplashScreen();

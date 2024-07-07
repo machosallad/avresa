@@ -17,8 +17,8 @@ void setup()
   Serial.begin(9600);
   delay(1000);
   EEPROMManager eeprom(64, 0);
-  uint8_t uuid = eeprom.readUUID();
-  app.init(uuid);
+  uint8_t diplayID = eeprom.readDisplayType();
+  app.init(diplayID);
 }
 
 /**

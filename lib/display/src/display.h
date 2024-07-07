@@ -30,7 +30,7 @@ public:
         NUMBER_OF_FONTS
     };
 
-    void init(int uuid);
+    void init(int displayType);
     void demo();
     void printText(String text, int16_t x, int16_t y, Color color = Color::AMBER);
     void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::AMBER);
@@ -53,6 +53,7 @@ private:
     const uint16_t m_matrixHeight;
     const uint16_t m_matrixChainLength;
     const uint8_t m_maxBrightness;
+    DisplayType m_displayType;
 };
 
 #endif // DISPLAY_H

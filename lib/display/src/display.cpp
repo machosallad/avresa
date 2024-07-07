@@ -2,7 +2,7 @@
 #include "fonts/avgang_mini.h"
 #include "fonts/avgang.h"
 
-Display::Display() : m_matrixWidth(64), m_matrixHeight(32), m_matrixChainLength(2), m_maxBrightness(128)
+Display::Display() : m_matrixWidth(64), m_matrixHeight(32), m_matrixChainLength(2), m_maxBrightness(128), m_displayType(DisplayType::DisplayLarge)
 {
 }
 
@@ -11,17 +11,18 @@ Display::~Display()
     // Destructor implementation
 }
 
-void Display::init(int uuid)
+void Display::init(int displayType)
 {
     HUB75_I2S_CFG config(m_matrixWidth, m_matrixHeight, m_matrixChainLength);
 
     // Configure green and blue channels
-    if (uuid != 1)
+    if (displayType != 1)
     {
         config.gpio.b1 = 26;
         config.gpio.b2 = 12;
         config.gpio.g1 = 27;
         config.gpio.g2 = 13;
+        m_displayType = DisplayType::DisplaySmall;
     }
     config.clkphase = false;
 

@@ -25,23 +25,23 @@ public:
     ~EEPROMManager();
 
     /**
-     * @brief Reads the UUID from the EEPROM memory.
-     * @return The UUID read from the EEPROM memory.
+     * @brief Reads the display type from the EEPROM memory.
+     * @return The display type read from the EEPROM memory.
      */
-    uint8_t readUUID();
+    uint8_t readDisplayType();
 
     /**
-     * @brief Writes the given UUID to the EEPROM.
+     * @brief Writes the given display type to the EEPROM.
      *
-     * This function is responsible for writing the provided UUID to the EEPROM.
+     * This function is responsible for writing the provided display type to the EEPROM.
      *
-     * @param uuid The UUID to be written to the EEPROM.
+     * @param displayType The display type to be written to the EEPROM.
      */
-    bool writeUUID(uint8_t uuid);
+    bool writeDisplayType(uint8_t displayType);
 
 private:
-    int eepromSize;  ///< The size of the EEPROM memory in bytes.
-    int uuidAddress; ///< The address of the UUID in the EEPROM memory.
+    int eepromSize;         ///< The size of the EEPROM memory in bytes.
+    int displayTypeAddress; ///< The address of the display type in the EEPROM memory.
 };
 
 #endif // EEPROM_MANAGER_H

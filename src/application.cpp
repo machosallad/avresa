@@ -12,10 +12,10 @@ Application::~Application()
     // Destructor
 }
 
-void Application::init(uint8_t uuid)
+void Application::init(uint8_t displayType)
 {
     // Fire up the system by connecting to WiFi, coniguring the Web server and fetching the latest announcements
-    m_display.init(uuid);
+    m_display.init(displayType);
     showSplashScreen();
     m_display.printTextCentered("Connecting");
     m_wifiManager.connectToWifi();

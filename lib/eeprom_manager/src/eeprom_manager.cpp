@@ -1,6 +1,6 @@
 #include "eeprom_manager.h"
 
-EEPROMManager::EEPROMManager(int size, int address) : eepromSize(size), uuidAddress(address)
+EEPROMManager::EEPROMManager(int size, int address) : eepromSize(size), displayTypeAddress(address)
 {
     EEPROM.begin(eepromSize);
 }
@@ -10,20 +10,20 @@ EEPROMManager::~EEPROMManager()
     EEPROM.end();
 }
 
-uint8_t EEPROMManager::readUUID()
+uint8_t EEPROMManager::readDisplayType()
 {
-    return EEPROM.read(uuidAddress);
+    return EEPROM.read(displayTypeAddress);
 }
 
-bool EEPROMManager::writeUUID(uint8_t uuid)
+bool EEPROMManager::writeDisplayType(uint8_t displayType)
 {
-    EEPROM.write(uuidAddress, uuid);
+    EEPROM.write(displayTypeAddress, displayType);
     if (!EEPROM.commit())
     {
         return false; // EEPROM.commit() failed
     }
 
     // Read back the value to verify the write operation
-    uint8_t writtenValue = EEPROM.read(uuidAddress);
-    return writtenValue == uuid;
+    uint8_t writtenValue = EEPROM.read(displayTypeAddress);
+    return writtenValue == displayType;
 }
