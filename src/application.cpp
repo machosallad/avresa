@@ -150,7 +150,7 @@ void Application::run()
 void Application::showSplashScreen()
 {
     m_display.clearScreen();
-    m_display.printTextCentered("MakerMelin", Display::Color::GREEN);
+    m_display.printTextCentered("MakerMelin", Display::Color::Green);
     delay(2000);
     m_display.clearScreen();
 }

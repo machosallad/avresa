@@ -9,32 +9,39 @@ public:
     Display();
     ~Display();
 
-    enum Color
+    enum class Color
     {
-        BLACK,
-        WHITE,
-        RED,
-        GREEN,
-        BLUE,
-        YELLOW,
-        AMBER,
-        ORANGE,
-        NUMBER_OF_COLORS
+        Black,
+        White,
+        Red,
+        Green,
+        Blue,
+        Yellow,
+        Amber,
+        Orange,
+        NumberOfColors
     };
 
-    enum Font
+    enum class Font
     {
-        SMALL,
-        MEDIUM,
-        LARGE,
-        NUMBER_OF_FONTS
+        Small,
+        Medium,
+        Large,
+        NumberOfFonts
+    };
+
+    enum class DisplayType
+    {
+        DisplaySmall,
+        DisplayLarge,
+        NumberOfDisplayTypes
     };
 
     void init(int displayType);
     void demo();
-    void printText(String text, int16_t x, int16_t y, Color color = Color::AMBER);
-    void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::AMBER);
-    void printTextCentered(String text, Color color = Color::AMBER);
+    void printText(String text, int16_t x, int16_t y, Color color = Color::Orange);
+    void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::Orange);
+    void printTextCentered(String text, Color color = Color::Orange);
     uint8_t getFontHeight();
     void clearScreen();
     void setFont(Font font);
@@ -48,7 +55,7 @@ private:
     void sanitizeText(String &text);
     uint8_t fontSizeInPixels(Font font);
     MatrixPanel_I2S_DMA *dma_display = nullptr;
-    Font m_currentFont = Font::SMALL;
+    Font m_currentFont = Font::Small;
     const uint16_t m_matrixWidth;
     const uint16_t m_matrixHeight;
     const uint16_t m_matrixChainLength;

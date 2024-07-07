@@ -44,13 +44,13 @@ void Display::setFont(Font font)
 {
     switch (font)
     {
-    case SMALL:
+    case Font::Small:
         dma_display->setFont(&AvgangMini);
         break;
-    case MEDIUM:
+    case Font::Medium:
         dma_display->setFont(&Avgang);
         break;
-    case LARGE:
+    case Font::Large:
         dma_display->setFont(&Avgang);
         break;
     default:
@@ -84,22 +84,23 @@ uint16_t Display::color565(Color color)
 {
     switch (color)
     {
-    case BLACK:
+    case Color::Black:
         return MatrixPanel_I2S_DMA::color565(0, 0, 0);
-    case WHITE:
+    case Color::White:
         return MatrixPanel_I2S_DMA::color565(255, 255, 255);
-    case RED:
+    case Color::Red:
         return MatrixPanel_I2S_DMA::color565(255, 0, 0);
-    case GREEN:
+    case Color::Green:
         return MatrixPanel_I2S_DMA::color565(0, 255, 0);
-    case BLUE:
+    case Color::Blue:
         return MatrixPanel_I2S_DMA::color565(0, 0, 255);
-    case YELLOW:
+    case Color::Yellow:
         return MatrixPanel_I2S_DMA::color565(255, 255, 0);
-    case AMBER:
-        return MatrixPanel_I2S_DMA::color565(255, 140, 0);
-    case ORANGE:
-        return MatrixPanel_I2S_DMA::color565(255, 100, 0);
+    case Color::Orange:
+        if (m_displayType == DisplayType::DisplaySmall)
+            return MatrixPanel_I2S_DMA::color565(255, 140, 0);
+        else
+            return MatrixPanel_I2S_DMA::color565(255, 100, 0);
     default:
         return MatrixPanel_I2S_DMA::color565(0, 0, 0);
     }
@@ -145,11 +146,11 @@ uint8_t Display::fontSizeInPixels(Font font)
 {
     switch (font)
     {
-    case SMALL:
+    case Font::Small:
         return AvgangMini.yAdvance;
-    case MEDIUM:
+    case Font::Medium:
         return Avgang.yAdvance;
-    case LARGE:
+    case Font::Large:
         return Avgang.yAdvance;
     default:
         return 8;
@@ -179,11 +180,11 @@ void Display::printTextCentered(String text, Color color)
 void Display::demo()
 {
     dma_display->clearScreen();
-    dma_display->fillScreen(color565(BLACK));
+    dma_display->fillScreen(color565(Color::Black));
     dma_display->setTextWrap(false);
 
     dma_display->setTextSize(1); // size 1 == 8 pixels high
-    dma_display->setTextColor(color565(AMBER));
+    dma_display->setTextColor(color565(Color::Orange));
     dma_display->setCursor(0, fontSizeInPixels(m_currentFont));
     dma_display->print("21:00 Stockholm C");
 
