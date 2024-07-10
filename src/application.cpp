@@ -56,7 +56,7 @@ bool Application::loadStationNames()
 bool Application::getLatestAnnouncements()
 {
     String response = m_trafikverketClient.getTrainAnnouncements();
-    if (response.length() == 0)
+    if (response.length() == 0 || m_trafikverketClient.getLastResponseCode() != 200)
         return false;
 
     m_announcements.updateAnnouncements(response);
@@ -65,11 +65,6 @@ bool Application::getLatestAnnouncements()
 
 void Application::updateDisplayInformation()
 {
-    if (m_announcements.getNumAnnouncements() == 0)
-    {
-        m_display.printTextCentered("No departures");
-    }
-
     for (int i = 0; i < m_announcements.getNumAnnouncements(); ++i)
     {
         TrainAnnouncement announcement = m_announcements.getAnnouncement(i);
