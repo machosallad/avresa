@@ -15,7 +15,7 @@ String TRAIN_ANNOUNCEMENT_REQUEST(String auth_key, String station_code)
         "\t\t\t\t<OR>\n"
         "\t\t\t\t\t<AND>\n"
         "\t\t\t\t\t\t<GT name='AdvertisedTimeAtLocation' value='$dateadd(00:00:00)' />\n"
-        "\t\t\t\t\t\t<LT name='AdvertisedTimeAtLocation' value='$dateadd(10:00:00)' />\n"
+        "\t\t\t\t\t\t<LT name='AdvertisedTimeAtLocation' value='$dateadd(12:00:00)' />\n"
         "\t\t\t\t\t</AND>\n"
         "\t\t\t\t\t<GT name='EstimatedTimeAtLocation' value='$now' />\n"
         "\t\t\t\t</OR>\n"
