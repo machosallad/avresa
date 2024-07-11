@@ -18,9 +18,9 @@ void Application::init(uint8_t displayType)
     uint8_t line = 0;
     m_display.init(displayType);
     showSplashScreen();
-    m_display.printText("Connecting to WiFi", line);
+    m_display.printText("Connect to WiFi", line);
     m_wifiManager.connectToWifi();
-    m_display.printText("Connecting to WiFi", line++, Display::Color::Green);
+    m_display.printText("Connect to WiFi", line++, Display::Color::Green);
     m_display.printText(m_wifiManager.getIpAddress(), line++, Display::Color::Green);
     m_webServer.init();
     m_webServer.registerObserver(Setting::Brightness, std::bind(&Display::setBrightness, &m_display, std::placeholders::_1));
