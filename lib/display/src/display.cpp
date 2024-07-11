@@ -175,6 +175,7 @@ uint8_t Display::getFontHeight()
 
 void Display::printTextCentered(String text, Color color)
 {
+    sanitizeText(text);
     dma_display->setTextSize(1);
     dma_display->setTextWrap(false);
     dma_display->setTextColor(this->color565(color));
