@@ -116,6 +116,20 @@ void Display::printText(String text, int16_t x, int16_t y, Color color)
     dma_display->print(text);
 }
 
+void Display::printText(String text, int16_t line, Color color)
+{
+    int16_t x = 0;
+    int16_t y = line * fontSizeInPixels(m_currentFont);
+    printText(text, x, y, color);
+}
+
+void Display::printTextRightAligned(String text, int16_t line, Color color)
+{
+    int16_t x = dma_display->width();
+    int16_t y = line * fontSizeInPixels(m_currentFont);
+    printTextRightAligned(text, x, y, color);
+}
+
 void Display::printTextRightAligned(String text, int16_t x, int16_t y, Color color)
 {
     sanitizeText(text);
