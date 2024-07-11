@@ -30,14 +30,12 @@ void Display::init(int displayType)
     dma_display->begin();
     dma_display->setFont(&AvgangMini);
     dma_display->clearScreen();
-    dma_display->fillScreen(MatrixPanel_I2S_DMA::color565(0, 0, 0));
     dma_display->setTextWrap(false);
 }
 
 void Display::clearScreen()
 {
     dma_display->clearScreen();
-    dma_display->fillScreen(MatrixPanel_I2S_DMA::color565(0, 0, 0));
 }
 
 void Display::setFont(Font font)
@@ -177,7 +175,6 @@ uint8_t Display::getFontHeight()
 
 void Display::printTextCentered(String text, Color color)
 {
-    dma_display->clearScreen();
     dma_display->setTextSize(1);
     dma_display->setTextWrap(false);
     dma_display->setTextColor(this->color565(color));
@@ -188,13 +185,13 @@ void Display::printTextCentered(String text, Color color)
 
     int xPosition = dma_display->width() / 2 - w / 2 + 1;
     dma_display->setCursor(xPosition, (m_matrixHeight / 2) + (fontSizeInPixels(m_currentFont) / 4));
+    dma_display->clearScreen();
     dma_display->print(text);
 }
 
 void Display::demo()
 {
     dma_display->clearScreen();
-    dma_display->fillScreen(color565(Color::Black));
     dma_display->setTextWrap(false);
 
     dma_display->setTextSize(1); // size 1 == 8 pixels high
