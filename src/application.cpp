@@ -15,18 +15,23 @@ Application::~Application()
 void Application::init(uint8_t displayType)
 {
     // Fire up the system by connecting to WiFi, coniguring the Web server and fetching the latest announcements
+    uint8_t line = 0;
     m_display.init(displayType);
     showSplashScreen();
-    m_display.printTextCentered("Connecting");
+    m_display.printText("Connecting to WiFi", line);
     m_wifiManager.connectToWifi();
+    m_display.printText("Connecting to WiFi", line++, Display::Color::Green);
+    m_display.printText(m_wifiManager.getIpAddress(), line++, Display::Color::Green);
     m_webServer.init();
     m_webServer.registerObserver(Setting::Brightness, std::bind(&Display::setBrightness, &m_display, std::placeholders::_1));
     m_webServer.registerObserver(Setting::StationCode, std::bind(&TrafikverketClient::setStationCode, &m_trafikverketClient, std::placeholders::_1));
     m_webServer.registerReloadObserver(std::bind(&Application::loadTrainStationAnnouncements, this));
-    m_display.printTextCentered("Updating");
+    m_display.printText("Update departures", line);
 
     if (getLatestAnnouncements())
     {
+        m_display.printText("Update departures", line++, Display::Color::Green);
+        delay(1000);
         updateDisplayInformation();
     }
     else
@@ -86,8 +91,8 @@ void Application::updateDisplayInformation()
         if (i == 0)
             m_display.clearScreen();
 
-        m_display.printText(train, 0, i * m_display.getFontHeight());
-        m_display.printTextRightAligned(information, m_display.getDisplayWidth(), i * m_display.getFontHeight());
+        m_display.printText(train, i);
+        m_display.printTextRightAligned(information, i);
     }
 }
 
@@ -145,7 +150,7 @@ void Application::run()
 void Application::showSplashScreen()
 {
     m_display.clearScreen();
-    m_display.printTextCentered("MakerMelin", Display::Color::Green);
+    m_display.printTextCentered("Avgång by MakerMelin", Display::Color::Green);
     delay(2000);
     m_display.clearScreen();
 }
