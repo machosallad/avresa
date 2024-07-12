@@ -105,7 +105,6 @@ void Application::loadTrainStationAnnouncements()
     }
     else
     {
-        m_display.printTextCentered("Error: " + m_trafikverketClient.getLastResponseCode());
         fetchErrorOccured = true;
     }
 }
