@@ -37,6 +37,7 @@ void Application::init(uint8_t displayType)
     else
     {
         m_display.printTextCentered("Failed to update!");
+        nextRequestInterval = getRequestInterval();
     }
 }
 
@@ -133,8 +134,9 @@ unsigned long Application::getRequestInterval()
 void Application::run()
 {
     unsigned long currentTime = millis();
-    if (currentTime - lastRequestTime >= nextRequestInterval)
+    if (currentTime - lastRequestTime >= nextRequestInterval || wifiRestored)
     {
+        wifiRestored = false;
         lastRequestTime = currentTime;
         loadTrainStationAnnouncements();
         nextRequestInterval = getRequestInterval();
@@ -142,7 +144,11 @@ void Application::run()
 
     if (!m_wifiManager.isConnected())
     {
-        m_display.printTextCentered("WiFi disconnected!");
+        // m_display.printTextCentered("WiFi disconnected");
+        m_display.setPixel(m_display.getDisplayWidth() - 1, m_display.getDisplayHeight() - 1, Display::Color::Red);
+        delay(1000);
+        m_wifiManager.connectToWifi();
+        wifiRestored = m_wifiManager.isConnected();
     }
 }
 

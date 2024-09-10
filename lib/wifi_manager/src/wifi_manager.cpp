@@ -22,6 +22,10 @@ String WiFiManager::getIpAddress()
 void WiFiManager::connectToWifi()
 {
     Serial.println("Connecting to WiFi");
+    Serial.print("SSID: ");
+    Serial.println(m_ssid);
+    Serial.print("Password: ");
+    Serial.println(m_password);
     WiFi.begin(m_ssid, m_password);
 
     while (WiFi.status() != WL_CONNECTED)

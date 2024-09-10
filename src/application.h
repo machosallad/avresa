@@ -31,6 +31,7 @@ private:
     unsigned long errorRequestInterval = 1000;
     unsigned long nextRequestInterval = requestInterval;
     bool fetchErrorOccured = false;
+    bool wifiRestored = false;
     TrafikverketClient m_trafikverketClient;
     ContentManager m_contentManager;
     WiFiManager m_wifiManager;
