@@ -39,6 +39,7 @@ public:
 
     void init(int displayType);
     void demo();
+    void setPixel(int16_t x, int16_t y, Color color);
     void printText(String text, int16_t x, int16_t y, Color color = Color::Orange);
     void printText(String text, int16_t line, Color color = Color::Orange);
     void printTextRightAligned(String text, int16_t line, Color color = Color::Orange);
@@ -49,6 +50,7 @@ public:
     void setFont(Font font);
     Font getFont();
     uint16_t getDisplayWidth();
+    uint16_t getDisplayHeight();
     void setBrightness(uint8_t brightness);
 
     uint16_t color565(Color color);

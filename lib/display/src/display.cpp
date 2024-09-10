@@ -67,6 +67,10 @@ uint16_t Display::getDisplayWidth()
 {
     return m_matrixWidth * m_matrixChainLength;
 }
+uint16_t Display::getDisplayHeight()
+{
+    return m_matrixHeight;
+}
 
 void Display::setBrightness(uint8_t brightness)
 {
@@ -208,4 +212,9 @@ void Display::demo()
 
     dma_display->setCursor(0, fontSizeInPixels(m_currentFont) * 4);
     dma_display->print("22:03 Uppsala");
+}
+
+void Display::setPixel(int16_t x, int16_t y, Color color)
+{
+    dma_display->drawPixel(x, y, color565(color));
 }
