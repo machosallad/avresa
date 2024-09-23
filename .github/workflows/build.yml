@@ -26,5 +26,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install platformio
 
+      - name: Inject secrets into config.h
+        run: |
+          echo "#ifndef CONFIG_H" > include/config.h
+          echo "#define CONFIG_H" >> include/config.h
+          echo "const char *WIFI_SSID = \"$WIFI_SSID\";" >> include/config.h
+          echo "const char *WIFI_PASSWORD = \"$WIFI_PASSWORD\";" >> include/config.h
+          echo "const char *SERVER_KEY = \"$SERVER_KEY\";" >> include/config.h
+          echo "const char *SERVER_URL = \"$SERVER_URL\";" >> include/config.h
+          echo "const char *STATION_CODE = \"$STATION_CODE\";" >> include/config.h
+          echo "#endif // CONFIG_H" >> include/config.h
+        env:
+          WIFI_SSID: ${{ secrets.WIFI_SSID }}
+          WIFI_PASSWORD: ${{ secrets.WIFI_PASSWORD }}
+          SERVER_KEY: ${{ secrets.SERVER_KEY }}
+          SERVER_URL: ${{ secrets.SERVER_URL }}
+          STATION_CODE: ${{ secrets.STATION_CODE }}
+
       - name: Build with PlatformIO
         run: platformio run
