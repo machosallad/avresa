@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,6 +28,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install platformio
 
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3.0.0
+        with:
+          versionSpec: "6.x"
+
+      - name: Determine Version
+        id: gitversion # step id used as reference for output values
+        uses: gittools/actions/gitversion/execute@v3.0.0
+
       - name: Inject secrets into config.h
         run: |
           echo "#ifndef CONFIG_H" > include/config.h
@@ -35,6 +46,7 @@ jobs:
           echo "const char *SERVER_KEY = \"$SERVER_KEY\";" >> include/config.h
           echo "const char *SERVER_URL = \"$SERVER_URL\";" >> include/config.h
           echo "const char *STATION_CODE = \"$STATION_CODE\";" >> include/config.h
+          echo "const char *VERSION = \"${{ steps.gitversion.outputs.FullSemVer }}\";" >> include/config.h
           echo "#endif // CONFIG_H" >> include/config.h
         env:
           WIFI_SSID: ${{ secrets.WIFI_SSID }}
@@ -42,6 +54,9 @@ jobs:
           SERVER_KEY: ${{ secrets.SERVER_KEY }}
           SERVER_URL: ${{ secrets.SERVER_URL }}
           STATION_CODE: ${{ secrets.STATION_CODE }}
+
+      - name: Echo Version Number
+        run: 'echo "Version: ${{ steps.gitversion.outputs.FullSemVer }}"'
 
       - name: Build with PlatformIO
         run: platformio run
