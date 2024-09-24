@@ -3,10 +3,11 @@ name: Build PlatformIO Project
 on:
   push:
     branches:
-      - feature/github-action-build-project
+      - main
+      - "feature/**"
   pull_request:
     branches:
-      - feature/github-action-build-project
+      - main
 
 jobs:
   build:
