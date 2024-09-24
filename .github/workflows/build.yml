@@ -63,17 +63,19 @@ jobs:
         run: platformio run
 
       - name: Generate MD5 Checksum
+        id: generate_md5
         run: |
-          FIRMWARE_PATH=".pio/build/*/firmware.bin"
+          FIRMWARE_PATH=$(find .pio/build -name "firmware.bin" | head -n 1)
           if [ ! -f $FIRMWARE_PATH ]; then
             echo "Firmware binary not found!"
             exit 1
           fi
           md5sum $FIRMWARE_PATH > $FIRMWARE_PATH.md5
           echo "MD5 checksum generated for $FIRMWARE_PATH"
+          echo "::set-output name=md5_file_path::$FIRMWARE_PATH.md5"
       
       - name: Store MD5 Checksum
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: firmware-md5
-          path: .pio/build/*/firmware.bin.md5
+          path: ${{ steps.generate_md5.outputs.md5_file_path }}
