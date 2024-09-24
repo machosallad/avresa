@@ -64,13 +64,16 @@ jobs:
 
       - name: Generate MD5 Checksum
         run: |
-          FIRMWARE_PATH=$(find . -name "*.bin" | head -n 1)
+          FIRMWARE_PATH=".pio/build/*/firmware.bin"
+          if [ ! -f $FIRMWARE_PATH ]; then
+            echo "Firmware binary not found!"
+            exit 1
+          fi
           md5sum $FIRMWARE_PATH > $FIRMWARE_PATH.md5
           echo "MD5 checksum generated for $FIRMWARE_PATH"
-
+      
       - name: Store MD5 Checksum
         uses: actions/upload-artifact@v3
         with:
           name: firmware-md5
-          path: |
-            $(find . -name "*.bin.md5" | head -n 1)
+          path: .pio/build/*/firmware.bin.md5
