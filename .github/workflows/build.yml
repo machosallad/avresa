@@ -45,7 +45,6 @@ jobs:
           echo "const char *WIFI_SSID = \"$WIFI_SSID\";" >> include/config.h
           echo "const char *WIFI_PASSWORD = \"$WIFI_PASSWORD\";" >> include/config.h
           echo "const char *SERVER_KEY = \"$SERVER_KEY\";" >> include/config.h
-          echo "const char *SERVER_URL = \"$SERVER_URL\";" >> include/config.h
           echo "const char *STATION_CODE = \"$STATION_CODE\";" >> include/config.h
           echo "const char *VERSION = \"${{ steps.gitversion.outputs.FullSemVer }}\";" >> include/config.h
           echo "#endif // CONFIG_H" >> include/config.h
@@ -53,7 +52,6 @@ jobs:
           WIFI_SSID: ${{ secrets.WIFI_SSID }}
           WIFI_PASSWORD: ${{ secrets.WIFI_PASSWORD }}
           SERVER_KEY: ${{ secrets.SERVER_KEY }}
-          SERVER_URL: ${{ secrets.SERVER_URL }}
           STATION_CODE: ${{ secrets.STATION_CODE }}
 
       - name: Echo Version Number
@@ -73,7 +71,7 @@ jobs:
           md5sum $FIRMWARE_PATH > $FIRMWARE_PATH.md5
           echo "MD5 checksum generated for $FIRMWARE_PATH"
           echo "md5_file_path=$FIRMWARE_PATH.md5" >> $GITHUB_OUTPUT
-      
+
       - name: Store MD5 Checksum
         uses: actions/upload-artifact@v4
         with:
