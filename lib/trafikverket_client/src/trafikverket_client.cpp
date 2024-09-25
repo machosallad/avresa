@@ -2,8 +2,11 @@
 #include "trafikverket_client.h"
 #include "xml_requests.h"
 
-TrafikverketClient::TrafikverketClient(const String &authKey, const String &serverUrl, const String &stationCode)
-    : m_authKey(authKey), m_serverUrl(serverUrl), m_stationCode(stationCode), m_lastResponseCode(0)
+// Endpoint URL for the Trafikverket API
+const String TrafikverketClient::m_serverUrl = "https://api.trafikinfo.trafikverket.se/v2/data.json";
+
+TrafikverketClient::TrafikverketClient(const String &authKey, const String &stationCode)
+    : m_authKey(authKey), m_stationCode(stationCode), m_lastResponseCode(0)
 {
     // Constructor implementation
 }

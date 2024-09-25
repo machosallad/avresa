@@ -5,7 +5,7 @@
 class TrafikverketClient
 {
 public:
-    TrafikverketClient(const String &serverKey, const String &serverUrl, const String &stationCode);
+    TrafikverketClient(const String &serverKey, const String &stationCode);
     ~TrafikverketClient();
 
     String getTrainAnnouncements(const String &stationCode);
@@ -17,7 +17,7 @@ public:
 private:
     String sendHttpRequest(const String &serverUrl, const String &body);
     String m_authKey;
-    String m_serverUrl;
+    static const String m_serverUrl;
     String m_stationCode;
     int m_lastResponseCode = 0;
 };
