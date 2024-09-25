@@ -1,10 +1,12 @@
 #include <Arduino.h>
 #include "application.h"
+#include "config.h"
 
 /**
  * @brief Represents the main application.
  */
-Application app;
+Application *app;
+FileManager fileManager;
 
 /**
  * @brief The main entry point of the program.
@@ -17,8 +19,52 @@ void setup()
   Serial.begin(9600);
   delay(1000);
   EEPROMManager eeprom(64, 0);
-  uint8_t diplayID = eeprom.readDisplayType();
-  app.init(diplayID);
+
+  // Initialize SPIFFS
+  fileManager.init();
+
+  // Write Secrets to filesystem
+  // TODO: Remove this and move to a configuration page instead
+  fileManager.saveSecret(WIFI_SSID, WIFI_PASSWORD, SERVER_KEY);
+  fileManager.saveParameter(Parameter{128, String(STATION_CODE)});
+
+  // Load Secrets
+  Secrets secrets;
+  if (!fileManager.loadSecret(secrets))
+  {
+    Serial.println("Failed to load secrets");
+    return;
+  }
+
+  Serial.println("Secrets loaded");
+  Serial.println("SSID: " + secrets.ssid);
+  Serial.println("Password: " + secrets.password);
+  Serial.println("API Key: " + secrets.apiKey);
+
+  // Load Config
+  Parameter parameters;
+  if (!fileManager.loadParameter(parameters))
+  {
+    Serial.println("Failed to load parameters");
+    return;
+  }
+
+  Serial.println("Parameters loaded");
+  Serial.println("Brightness: " + String(parameters.brightness));
+  Serial.println("Station Code: " + parameters.stationCode);
+
+  // Close SPIFFS
+  fileManager.end();
+
+  // Initialize Application with loaded secrets and configuration
+  app = new Application(secrets, parameters);
+  if (app == nullptr)
+  {
+    Serial.println("Failed to allocate memory for Application");
+    return;
+  }
+  uint8_t displayID = eeprom.readDisplayType();
+  app->init(displayID);
 }
 
 /**
@@ -29,5 +75,5 @@ void setup()
  */
 void loop()
 {
-  app.run();
+  app->run();
 }

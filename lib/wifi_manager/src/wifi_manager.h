@@ -6,7 +6,7 @@
 class WiFiManager
 {
 public:
-    WiFiManager(const char *ssid, const char *password);
+    WiFiManager(const String &ssid, const String &password);
     ~WiFiManager();
 
     void connectToWifi();
@@ -14,8 +14,9 @@ public:
     String getIpAddress();
 
 private:
-    const char *m_ssid;
-    const char *m_password;
+    String m_ssid;
+    String m_password;
 };
+;
 
 #endif // WIFI_MANAGER_H
