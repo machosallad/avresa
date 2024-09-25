@@ -2,8 +2,9 @@
 #include "fonts/avgang_mini.h"
 #include "fonts/avgang.h"
 
-Display::Display() : m_matrixWidth(64), m_matrixHeight(32), m_matrixChainLength(2), m_maxBrightness(128), m_displayType(DisplayType::DisplayLarge)
+Display::Display(uint8_t [[maybe_unused]] brightness) : m_matrixWidth(64), m_matrixHeight(32), m_matrixChainLength(2), m_maxBrightness(128), m_displayType(DisplayType::DisplayLarge)
 {
+    // TODO: Use the brightness parameter to set the brightness of the display
 }
 
 Display::~Display()

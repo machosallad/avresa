@@ -6,7 +6,7 @@
 class Display
 {
 public:
-    Display();
+    Display(uint8_t brightness);
     ~Display();
 
     enum class Color
