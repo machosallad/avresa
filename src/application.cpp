@@ -1,10 +1,15 @@
 #include "application.h"
-#include "config.h"
 #include "train_announcement_string_builder.h"
 
-Application::Application() : m_trafikverketClient(SERVER_KEY, SERVER_URL, STATION_CODE), m_wifiManager(WIFI_SSID, WIFI_PASSWORD)
+Application::Application(const Secrets &secret, const Parameter &parameter)
+    : m_secrets(secret),
+      m_parameters(parameter),
+      m_trafikverketClient(secret.apiKey, parameter.stationCode),
+      m_wifiManager(secret.ssid, secret.password),
+      m_display(parameter.brightness),
+      m_announcements(parameter.stationCode)
 {
-    // Constructor
+    // Initialization code
 }
 
 Application::~Application()

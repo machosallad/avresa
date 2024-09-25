@@ -10,11 +10,12 @@
 #include "settings.h"
 #include "station_lockup.h"
 #include "eeprom_manager.h"
+#include "file_manager.h"
 
 class Application
 {
 public:
-    Application();
+    Application(const Secrets &secret, const Parameter &parameter);
     ~Application();
     void init(uint8_t displayType);
     unsigned long getRequestInterval();
@@ -37,6 +38,8 @@ private:
     Display m_display;
     TrainStationAnnouncements m_announcements;
     WebServer m_webServer;
+    Secrets m_secrets;
+    Parameter m_parameters;
 };
 
 #endif // APPLICATION_H
