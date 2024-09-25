@@ -1,5 +1,5 @@
 #include "wifi_manager.h"
-WiFiManager::WiFiManager(const char *ssid, const char *password) : m_ssid(ssid), m_password(password)
+WiFiManager::WiFiManager(const String &ssid, const String &password) : m_ssid(ssid), m_password(password)
 {
     // Constructor body (if needed)
 }
