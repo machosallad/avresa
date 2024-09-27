@@ -15,7 +15,7 @@
 class Application
 {
 public:
-    Application(const Secrets &secret, const Parameter &parameter);
+    Application(const Secrets &secret, const Parameter &parameter, FileManager &fileManager);
     ~Application();
     void init(uint8_t displayType);
     unsigned long getRequestInterval();
@@ -40,6 +40,7 @@ private:
     WebServer m_webServer;
     Secrets m_secrets;
     Parameter m_parameters;
+    FileManager &m_fileManager;
 };
 
 #endif // APPLICATION_H

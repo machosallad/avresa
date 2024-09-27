@@ -25,7 +25,10 @@ void setup()
 
   // Write Secrets to filesystem
   // TODO: Remove this and move to a configuration page instead
-  fileManager.saveSecret(WIFI_SSID, WIFI_PASSWORD, SERVER_KEY);
+  String wifiSSID(WIFI_SSID);
+  String wifiPassword(WIFI_PASSWORD);
+  String serverKey(SERVER_KEY);
+  fileManager.saveSecret(wifiSSID, wifiPassword, serverKey);
   fileManager.saveParameter(Parameter{128, String(STATION_CODE)});
 
   // Load Secrets
@@ -57,7 +60,7 @@ void setup()
   fileManager.end();
 
   // Initialize Application with loaded secrets and configuration
-  app = new Application(secrets, parameters);
+  app = new Application(secrets, parameters, fileManager);
   if (app == nullptr)
   {
     Serial.println("Failed to allocate memory for Application");
