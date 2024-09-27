@@ -12,6 +12,8 @@ public:
     void connectToWifi();
     bool isConnected();
     String getIpAddress();
+    void setSSID(const String &ssid);
+    void setPassword(const String &password);
 
 private:
     String m_ssid;

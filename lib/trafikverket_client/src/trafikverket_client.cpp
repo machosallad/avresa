@@ -43,6 +43,11 @@ String TrafikverketClient::getTrainStations()
     return sendHttpRequest(m_serverUrl, body);
 }
 
+void TrafikverketClient::setApiKey(const String &apiKey)
+{
+    m_authKey = apiKey;
+}
+
 String TrafikverketClient::sendHttpRequest(const String &serverUrl, const String &body)
 {
     HTTPClient http;

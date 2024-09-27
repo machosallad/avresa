@@ -19,6 +19,16 @@ String WiFiManager::getIpAddress()
     return WiFi.localIP().toString();
 }
 
+void WiFiManager::setSSID(const String &ssid)
+{
+    m_ssid = ssid;
+}
+
+void WiFiManager::setPassword(const String &password)
+{
+    m_password = password;
+}
+
 void WiFiManager::connectToWifi()
 {
     Serial.println("Connecting to WiFi");
