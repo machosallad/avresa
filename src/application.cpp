@@ -37,6 +37,9 @@ void Application::init(uint8_t displayType)
     m_webServer.registerObserver(Setting::ApiKey, std::bind(&TrafikverketClient::setApiKey, &m_trafikverketClient, std::placeholders::_1));
     m_webServer.registerObserver(Setting::WifiSSID, std::bind(&WiFiManager::setSSID, &m_wifiManager, std::placeholders::_1));
     m_webServer.registerObserver(Setting::WifiPassword, std::bind(&WiFiManager::setPassword, &m_wifiManager, std::placeholders::_1));
+    m_webServer.registerObserver(Setting::WifiSSID, std::bind(&FileManager::saveWifiSSID, &m_fileManager, std::placeholders::_1));
+    m_webServer.registerObserver(Setting::WifiPassword, std::bind(&FileManager::saveWifiPassword, &m_fileManager, std::placeholders::_1));
+    m_webServer.registerObserver(Setting::ApiKey, std::bind(&FileManager::saveApiKey, &m_fileManager, std::placeholders::_1));
 
     m_display.printText("Update departures", line);
 
