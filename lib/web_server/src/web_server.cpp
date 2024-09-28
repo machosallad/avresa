@@ -147,6 +147,12 @@ void WebServer::handleRequest(Setting setting, uint8_t value)
 
 void WebServer::handleRequest(Setting setting, const String &value)
 {
+  if (value.length() == 0)
+  {
+    Serial.println("Empty value received, ignoring request");
+    return;
+  }
+
   Serial.println("Handling request");
   Serial.print("Setting: ");
   Serial.println(static_cast<int>(setting));
