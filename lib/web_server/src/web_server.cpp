@@ -1,114 +1,15 @@
 #include "web_server.h"
-
-const char index_html[] PROGMEM = R"rawliteral(
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    />
-    <title>Avresa</title>
-    <script>
-      function updateSetting(setting, value) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/setting/" + setting, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({ value: value }));
-      }
-      function reloadAnnouncements() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/reload", true);
-        xhr.send();
-      }
-      function saveWifiSettings() {
-        var ssid = document.getElementById("ssid").value;
-        var password = document.getElementById("password").value;
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/configuration/saveWifi", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({ ssid: ssid, password: password }));
-      }
-      function saveApiKey() {
-        var apiKey = document.getElementById("apikey").value;
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/configuration/saveApiKey", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({ apiKey: apiKey }));
-      }
-    </script>
-  </head>
-  <body class="bg-dark text-white">
-    <div class="container">
-      <h1 class="mt-4">Avresa</h1>
-      <div class="my-4">
-        <h2>Brightness</h2>
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value="50"
-          class="custom-range"
-          id="brightness"
-          onchange="updateSetting('brightness', Number(this.value))"
-        />
-      </div>
-      <div class="my-4">
-        <h2>Station</h2>
-        <select
-          class="custom-select bg-secondary text-white"
-          id="stationCode"
-          onchange="updateSetting('stationCode', this.value)"
-        >
-          <option value="Sl">Sala</option>
-          <option value="U">Uppsala</option>
-          <option value="Vå">Västerås</option>
-          <option value="Cst">Stockholm C</option>
-        </select>
-      </div>
-      <div class="my-4">
-        <h2>Announcements</h2>
-        <button class="btn btn-light" onclick="reloadAnnouncements()">
-          Reload
-        </button>
-      </div>
-      <div class="my-4">
-        <h2>WiFi Configuration</h2>
-        <form onsubmit="event.preventDefault(); saveWifiSettings();">
-          <div class="form-group">
-            <label for="ssid">SSID:</label>
-            <input type="text" class="form-control" id="ssid" name="ssid" />
-          </div>
-          <div class="form-group">
-            <label for="password">Password:</label>
-            <input
-              type="text"
-              class="form-control"
-              id="password"
-              name="password"
-            />
-          </div>
-          <button type="submit" class="btn btn-primary">
-            Save WiFi Settings
-          </button>
-        </form>
-      </div>
-      <div class="my-4">
-        <h2>API Key Configuration</h2>
-        <form onsubmit="event.preventDefault(); saveApiKey();">
-          <div class="form-group">
-            <label for="apikey">API Key:</label>
-            <input type="text" class="form-control" id="apikey" name="apikey" />
-          </div>
-          <button type="submit" class="btn btn-primary">Save API Key</button>
-        </form>
-      </div>
-    </div>
-  </body>
-</html>
-)rawliteral";
+#ifdef __has_include
+#if __has_include("index_html.h")
+#include "index_html.h"
+#else
+// Provide a fallback or a dummy definition if the file is not found
+const char index_html[] PROGMEM = "";
+#endif
+#else
+// Fallback for compilers that do not support __has_include
+#include "index_html.h"
+#endif
 
 WebServer::WebServer() : m_server(80)
 {

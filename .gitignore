@@ -12,3 +12,6 @@
 
 ### Project ###
 include/config.h
+
+### Generated filed ###
+lib/web_server/src/index_html.h
