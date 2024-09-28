@@ -26,9 +26,8 @@ private:
     void handleRequest(Setting setting, uint8_t value);
     void handleRequest(Setting setting, const String &value);
     void handleReloadRequest();
-    void handleSettingUpdate(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total, Setting setting);
-    void handleSaveApiKey(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
-    void handleSaveWifiSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+    void handleSettingUpdate(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+    void handleConfigurationUpdate(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
     void notFound(AsyncWebServerRequest *request);
 
     AsyncWebServer m_server;

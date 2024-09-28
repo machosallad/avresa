@@ -31,24 +31,12 @@ void WebServer::init()
                       { notFound(request); });
 
   m_server.on(
-      "/setting/color", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-      { handleSettingUpdate(request, data, len, index, total, Setting::Color); });
+      "/setting", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+      { handleSettingUpdate(request, data, len, index, total); });
 
   m_server.on(
-      "/setting/stationCode", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-      { handleSettingUpdate(request, data, len, index, total, Setting::StationCode); });
-
-  m_server.on(
-      "/setting/brightness", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-      { handleSettingUpdate(request, data, len, index, total, Setting::Brightness); });
-
-  m_server.on(
-      "/configuration/saveWifi", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-      { handleSaveWifiSettings(request, data, len, index, total); });
-
-  m_server.on(
-      "/configuration/saveApiKey", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-      { handleSaveApiKey(request, data, len, index, total); });
+      "/configuration", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+      { handleConfigurationUpdate(request, data, len, index, total); });
 
   m_server.on(
       "/reload", HTTP_GET, [this](AsyncWebServerRequest *request)
@@ -59,74 +47,73 @@ void WebServer::init()
   m_server.begin();
 }
 
-void WebServer::handleSettingUpdate(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total, Setting setting)
+void WebServer::handleSettingUpdate(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
 {
   DynamicJsonDocument doc(1024);
   deserializeJson(doc, (const char *)data);
 
   // Check if the doc conains a value field
-  if (!doc.containsKey("value"))
+  if (!doc.containsKey("setting") || !doc.containsKey("value"))
   {
     request->send(400, "application/json", "{\"message\":\"Invalid request\"}");
     return;
   }
 
-  if (doc["value"].is<int>())
+  String setting = doc["setting"].as<String>();
+  if (setting == "color")
   {
-    handleRequest(setting, doc["value"].as<int>());
+    handleRequest(Setting::Color, doc["value"].as<String>());
   }
-  else if (doc["value"].is<String>())
+  else if (setting == "brightness")
   {
-    handleRequest(setting, doc["value"].as<String>());
+    handleRequest(Setting::Brightness, doc["value"].as<uint8_t>());
+  }
+  else if (setting == "stationCode")
+  {
+    handleRequest(Setting::StationCode, doc["value"].as<String>());
   }
   else
   {
-    request->send(400, "application/json", "{\"message\":\"Invalid request\"}");
+    request->send(400, "application/json", "{\"message\":\"Unknown setting\"}");
     return;
   }
 
-  request->send(200, "text/plain", "OK");
+  request->send(200, "application/json", "{\"message\":\"Setting updated successfully\"}");
 }
 
-void WebServer::handleSaveWifiSettings(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+void WebServer::handleConfigurationUpdate(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
 {
   DynamicJsonDocument doc(1024);
-  deserializeJson(doc, (const char *)data);
+  DeserializationError error = deserializeJson(doc, (const char *)data);
+
+  if (error)
+  {
+    request->send(400, "application/json", "{\"message\":\"Invalid JSON\"}");
+    return;
+  }
+
+  bool updated = false;
 
   if (doc.containsKey("ssid") && doc.containsKey("password"))
   {
-    String ssid = doc["ssid"].as<String>();
-    String password = doc["password"].as<String>();
-
-    // Save the WiFi credentials
-    handleRequest(Setting::WifiSSID, ssid);
-    handleRequest(Setting::WifiPassword, password);
-
-    request->send(200, "application/json", "{\"message\":\"WiFi settings saved. Please restart the device.\"}");
+    handleRequest(Setting::WifiSSID, doc["ssid"].as<String>());
+    handleRequest(Setting::WifiPassword, doc["password"].as<String>());
+    updated = true;
   }
-  else
-  {
-    request->send(400, "application/json", "{\"message\":\"Missing parameters\"}");
-  }
-}
-
-void WebServer::handleSaveApiKey(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-{
-  DynamicJsonDocument doc(1024);
-  deserializeJson(doc, (const char *)data);
 
   if (doc.containsKey("apiKey"))
   {
-    String apiKey = doc["apiKey"].as<String>();
+    handleRequest(Setting::ApiKey, doc["apiKey"].as<String>());
+    updated = true;
+  }
 
-    // Save the API key
-    handleRequest(Setting::ApiKey, apiKey);
-
-    request->send(200, "application/json", "{\"message\":\"API key saved. Please restart the device.\"}");
+  if (updated)
+  {
+    request->send(200, "application/json", "{\"message\":\"Configuration updated successfully\"}");
   }
   else
   {
-    request->send(400, "application/json", "{\"message\":\"Missing parameters\"}");
+    request->send(400, "application/json", "{\"message\":\"Invalid request\"}");
   }
 }
 

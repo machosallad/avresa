@@ -11,9 +11,9 @@
     <script>
       function updateSetting(setting, value) {
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/setting/" + setting, true);
+        xhr.open("POST", "/setting", true);
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({ value: value }));
+        xhr.send(JSON.stringify({ setting: setting, value: value }));
       }
       function reloadAnnouncements() {
         var xhr = new XMLHttpRequest();
@@ -30,7 +30,7 @@
           '<div class="alert alert-info">Saving...</div>';
 
         // Make an AJAX request to save the settings
-        fetch("/configuration/saveWifi", {
+        fetch("/configuration", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -64,7 +64,7 @@
           '<div class="alert alert-info">Saving...</div>';
 
         // Make an AJAX request to save the API key
-        fetch("/configuration/saveApiKey", {
+        fetch("/configuration", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -126,39 +126,45 @@
       </div>
       <div class="my-4">
         <h2>WiFi Configuration</h2>
-        <form onsubmit="event.preventDefault(); saveWifiSettings();">
-          <div class="form-group">
-            <label for="ssid">SSID:</label>
-            <input type="text" class="form-control" id="ssid" name="ssid" />
-          </div>
-          <div class="form-group">
-            <label for="password">Password:</label>
-            <input
-              type="text"
-              class="form-control"
-              id="password"
-              name="password"
-            />
-          </div>
-          <button type="submit" class="btn btn-primary">
-            Save WiFi Settings
-          </button>
-          <div id="wifiFeedback" class="mt-2"></div>
-          <!-- Feedback element -->
-        </form>
+        <div class="form-group">
+          <label for="ssid">WiFi SSID:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="ssid"
+            placeholder="Enter SSID"
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">WiFi Password:</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            placeholder="Enter Password"
+          />
+        </div>
+        <button class="btn btn-primary" onclick="saveWifiSettings()">
+          Save WiFi Settings
+        </button>
+        <div id="wifiFeedback"></div>
       </div>
 
       <div class="my-4">
         <h2>API Key Configuration</h2>
-        <form onsubmit="event.preventDefault(); saveApiKey();">
-          <div class="form-group">
-            <label for="apiKey">API Key:</label>
-            <input type="text" class="form-control" id="apiKey" name="apiKey" />
-          </div>
-          <button type="submit" class="btn btn-primary">Save API Key</button>
-          <div id="apiKeyFeedback" class="mt-2"></div>
-          <!-- Feedback element -->
-        </form>
+        <div class="form-group">
+          <label for="apiKey">API Key:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="apiKey"
+            placeholder="Enter API Key"
+          />
+        </div>
+        <button class="btn btn-primary" onclick="saveApiKey()">
+          Save API Key
+        </button>
+        <div id="apiKeyFeedback"></div>
       </div>
     </div>
   </body>
