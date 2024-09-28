@@ -8,120 +8,74 @@ FileManager::FileManager()
 bool FileManager::saveWifiSSID(const String &ssid)
 {
     Serial.println("Saving SSID: " + ssid);
-    return saveSecret(ssid, "", "");
+    return saveToFile("/ssid.txt", ssid);
 }
 
 bool FileManager::saveWifiPassword(const String &password)
 {
     Serial.println("Saving password: " + password);
-    return saveSecret("", password, "");
+    return saveToFile("/password.txt", password);
 }
 
 bool FileManager::saveApiKey(const String &apiKey)
 {
     Serial.println("Saving API Key: " + apiKey);
-    return saveSecret("", "", apiKey);
+    return saveToFile("/apikey.txt", apiKey);
 }
 
-bool FileManager::saveSecret(const String &ssid, const String &password, const String &apiKey)
+bool FileManager::loadWifiSSID(String &ssid)
 {
-    // Load existing secrets
-    Secrets secrets;
-    loadSecret(secrets);
-
-    // Update only the provided fields
-    if (!ssid.isEmpty())
-    {
-        secrets.ssid = ssid;
-    }
-    if (!password.isEmpty())
-    {
-        secrets.password = password;
-    }
-    if (!apiKey.isEmpty())
-    {
-        secrets.apiKey = apiKey;
-    }
-
-    // Save the updated secrets
-    SPIFFSManager spiffsManager;
-    File file = SPIFFS.open(secretFilePath, FILE_WRITE);
-    if (!file)
-    {
-        Serial.println("Failed to open file for writing");
-        return false;
-    }
-    file.println(secrets.ssid);
-    file.println(secrets.password);
-    file.println(secrets.apiKey);
-    file.close();
-    return true;
+    return loadFromFile("/ssid.txt", ssid);
 }
 
-bool FileManager::saveSecret(const Secrets &secrets)
+bool FileManager::loadWifiPassword(String &password)
 {
-    return saveSecret(secrets.ssid, secrets.password, secrets.apiKey);
+    return loadFromFile("/password.txt", password);
 }
 
-bool FileManager::loadSecret(Secrets &secrets)
+bool FileManager::loadApiKey(String &apiKey)
 {
-    String ssid, password, apiKey;
-    if (!loadSecret(ssid, password, apiKey))
-    {
-        return false;
-    }
-    secrets.ssid = ssid;
-    secrets.password = password;
-    secrets.apiKey = apiKey;
-    return true;
+    return loadFromFile("/apikey.txt", apiKey);
 }
 
-bool FileManager::loadSecret(String &ssid, String &password, String &apiKey)
+bool FileManager::saveToFile(const String &filename, const String &data)
 {
     SPIFFSManager spiffsManager;
-    File file = SPIFFS.open(secretFilePath, FILE_READ);
-    if (!file)
+    return spiffsManager.saveFile(filename, data);
+}
+
+bool FileManager::loadFromFile(const String &filename, String &data)
+{
+    SPIFFSManager spiffsManager;
+    return spiffsManager.loadFile(filename, data);
+}
+
+bool FileManager::saveBrightness(int brightness)
+{
+    SPIFFSManager spiffsManager;
+    return saveToFile("/brightness.txt", String(brightness));
+}
+
+bool FileManager::loadBrightness(int &brightness)
+{
+    SPIFFSManager spiffsManager;
+    String data;
+    if (!loadFromFile("/brightness.txt", data))
     {
-        Serial.println("Failed to open file for reading");
         return false;
     }
-    ssid = file.readStringUntil('\n');
-    password = file.readStringUntil('\n');
-    apiKey = file.readStringUntil('\n');
-    ssid.trim();
-    password.trim();
-    apiKey.trim();
-    file.close();
+    brightness = data.toInt();
     return true;
 }
 
-bool FileManager::saveParameter(const Parameter &parameter)
+bool FileManager::saveStationCode(const String &stationCode)
 {
     SPIFFSManager spiffsManager;
-    File file = SPIFFS.open(parameterFilePath, FILE_WRITE);
-    if (!file)
-    {
-        Serial.println("Failed to open file for writing");
-        return false;
-    }
-    file.println(parameter.brightness);
-    file.println(parameter.stationCode);
-    file.close();
-    return true;
+    return saveToFile("/station_code.txt", stationCode);
 }
 
-bool FileManager::loadParameter(Parameter &parameter)
+bool FileManager::loadStationCode(String &stationCode)
 {
     SPIFFSManager spiffsManager;
-    File file = SPIFFS.open(parameterFilePath, FILE_READ);
-    if (!file)
-    {
-        Serial.println("Failed to open file for reading");
-        return false;
-    }
-    parameter.brightness = file.readStringUntil('\n').toInt();
-    parameter.stationCode = file.readStringUntil('\n');
-    parameter.stationCode.trim();
-    file.close();
-    return true;
+    return loadFromFile("/station_code.txt", stationCode);
 }

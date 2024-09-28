@@ -25,16 +25,18 @@ void setup()
   String wifiSSID(WIFI_SSID);
   String wifiPassword(WIFI_PASSWORD);
   String serverKey(SERVER_KEY);
-  fileManager.saveSecret(wifiSSID, wifiPassword, serverKey);
-  fileManager.saveParameter(Parameter{128, String(STATION_CODE)});
+  String stationCode(STATION_CODE);
+  fileManager.saveWifiSSID(wifiSSID);
+  fileManager.saveWifiPassword(wifiPassword);
+  fileManager.saveApiKey(serverKey);
+  fileManager.saveBrightness(128);
+  fileManager.saveStationCode(stationCode);
 
   // Load Secrets
   Secrets secrets;
-  if (!fileManager.loadSecret(secrets))
-  {
-    Serial.println("Failed to load secrets");
-    return;
-  }
+  fileManager.loadWifiSSID(secrets.ssid);
+  fileManager.loadWifiPassword(secrets.password);
+  fileManager.loadApiKey(secrets.apiKey);
 
   Serial.println("Secrets loaded");
   Serial.println("SSID: " + secrets.ssid);
@@ -43,11 +45,8 @@ void setup()
 
   // Load Config
   Parameter parameters;
-  if (!fileManager.loadParameter(parameters))
-  {
-    Serial.println("Failed to load parameters");
-    return;
-  }
+  fileManager.loadBrightness(parameters.brightness);
+  fileManager.loadStationCode(parameters.stationCode);
 
   Serial.println("Parameters loaded");
   Serial.println("Brightness: " + String(parameters.brightness));

@@ -31,19 +31,20 @@ class FileManager
 {
 public:
     FileManager();
-    bool saveSecret(const String &ssid, const String &password, const String &apiKey);
-    bool saveSecret(const Secrets &secrets);
     bool saveWifiSSID(const String &ssid);
     bool saveWifiPassword(const String &apiKey);
     bool saveApiKey(const String &apiKey);
-    bool loadSecret(String &ssid, String &password, String &apiKey);
-    bool loadSecret(Secrets &secrets);
-    bool saveParameter(const Parameter &parameters);
-    bool loadParameter(Parameter &parameters);
+    bool loadWifiSSID(String &ssid);
+    bool loadWifiPassword(String &password);
+    bool loadApiKey(String &apiKey);
+    bool saveBrightness(int brightness);
+    bool loadBrightness(int &brightness);
+    bool saveStationCode(const String &stationCode);
+    bool loadStationCode(String &stationCode);
 
 private:
-    const char *secretFilePath = "/secrets.txt";
-    const char *parameterFilePath = "/parameters.txt";
+    bool saveToFile(const String &filename, const String &data);
+    bool loadFromFile(const String &filename, String &data);
 };
 
 #endif // FILE_MANAGER_H
