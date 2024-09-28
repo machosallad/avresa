@@ -1,39 +1,25 @@
 #include "file_manager.h"
+#include "spiffs_manager.h"
 
 FileManager::FileManager()
 {
 }
 
-void FileManager::init()
-{
-    // Initialize SPIFFS
-    if (!SPIFFS.begin(true))
-    {
-        Serial.println("An error has occurred while mounting SPIFFS");
-    }
-    else
-    {
-        Serial.println("SPIFFS mounted successfully");
-    }
-}
-
-void FileManager::end()
-{
-    SPIFFS.end();
-}
-
 bool FileManager::saveWifiSSID(const String &ssid)
 {
+    Serial.println("Saving SSID: " + ssid);
     return saveSecret(ssid, "", "");
 }
 
 bool FileManager::saveWifiPassword(const String &password)
 {
+    Serial.println("Saving password: " + password);
     return saveSecret("", password, "");
 }
 
 bool FileManager::saveApiKey(const String &apiKey)
 {
+    Serial.println("Saving API Key: " + apiKey);
     return saveSecret("", "", apiKey);
 }
 
@@ -58,6 +44,7 @@ bool FileManager::saveSecret(const String &ssid, const String &password, const S
     }
 
     // Save the updated secrets
+    SPIFFSManager spiffsManager;
     File file = SPIFFS.open(secretFilePath, FILE_WRITE);
     if (!file)
     {
@@ -91,6 +78,7 @@ bool FileManager::loadSecret(Secrets &secrets)
 
 bool FileManager::loadSecret(String &ssid, String &password, String &apiKey)
 {
+    SPIFFSManager spiffsManager;
     File file = SPIFFS.open(secretFilePath, FILE_READ);
     if (!file)
     {
@@ -109,6 +97,7 @@ bool FileManager::loadSecret(String &ssid, String &password, String &apiKey)
 
 bool FileManager::saveParameter(const Parameter &parameter)
 {
+    SPIFFSManager spiffsManager;
     File file = SPIFFS.open(parameterFilePath, FILE_WRITE);
     if (!file)
     {
@@ -123,6 +112,7 @@ bool FileManager::saveParameter(const Parameter &parameter)
 
 bool FileManager::loadParameter(Parameter &parameter)
 {
+    SPIFFSManager spiffsManager;
     File file = SPIFFS.open(parameterFilePath, FILE_READ);
     if (!file)
     {

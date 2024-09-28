@@ -20,9 +20,6 @@ void setup()
   delay(1000);
   EEPROMManager eeprom(64, 0);
 
-  // Initialize SPIFFS
-  fileManager.init();
-
   // Write Secrets to filesystem
   // TODO: Remove this and move to a configuration page instead
   String wifiSSID(WIFI_SSID);
@@ -55,9 +52,6 @@ void setup()
   Serial.println("Parameters loaded");
   Serial.println("Brightness: " + String(parameters.brightness));
   Serial.println("Station Code: " + parameters.stationCode);
-
-  // Close SPIFFS
-  fileManager.end();
 
   // Initialize Application with loaded secrets and configuration
   app = new Application(secrets, parameters, fileManager);
