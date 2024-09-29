@@ -52,6 +52,11 @@ void WebServer::init()
   m_server.on("/fwlink", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(200, "text/html", FPSTR(captive_portal_html)); });
 
+  m_server.on("/restart", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(200, "text/plain", "OK");
+                delay(2000);
+                ESP.restart(); });
+
   // Start the server
   m_server.begin();
 }
