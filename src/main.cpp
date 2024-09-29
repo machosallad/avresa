@@ -20,18 +20,6 @@ void setup()
   delay(1000);
   EEPROMManager eeprom(64, 0);
 
-  // Write Secrets to filesystem
-  // TODO: Remove this and move to a configuration page instead
-  String wifiSSID(WIFI_SSID);
-  String wifiPassword(WIFI_PASSWORD);
-  String serverKey(SERVER_KEY);
-  String stationCode(STATION_CODE);
-  fileManager.saveWifiSSID(wifiSSID);
-  fileManager.saveWifiPassword(wifiPassword);
-  fileManager.saveApiKey(serverKey);
-  fileManager.saveBrightness(128);
-  fileManager.saveStationCode(stationCode);
-
   // Load Secrets
   Secrets secrets;
   fileManager.loadWifiSSID(secrets.ssid);
