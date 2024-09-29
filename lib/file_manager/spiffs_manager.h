@@ -17,7 +17,7 @@ class SPIFFSManager
 public:
     SPIFFSManager()
     {
-        if (!SPIFFS.begin())
+        if (!SPIFFS.begin(true))
         {
             Serial.println("Failed to mount file system");
         }
