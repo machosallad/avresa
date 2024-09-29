@@ -1,17 +1,20 @@
 #include "web_server.h"
 #ifdef __has_include
-#if __has_include("index_html.h")
+#if __has_include("index_html.h") && __has_include("captive_portal_html.h")
 #include "index_html.h"
+#include "captive_portal_html.h"
 #else
 // Provide a fallback or a dummy definition if the file is not found
 const char index_html[] PROGMEM = "";
+const char captive_portal_html[] PROGMEM = "";
 #endif
 #else
 // Fallback for compilers that do not support __has_include
 #include "index_html.h"
+#include "captive_portal_html.h"
 #endif
 
-WebServer::WebServer() : m_server(80)
+WebServer::WebServer() : m_server(80), m_useCaptivePortal(false)
 {
   // Constructor implementation
 }
@@ -24,8 +27,8 @@ WebServer::~WebServer()
 void WebServer::init()
 {
   // Serve the HTML page
-  m_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send(200, "text/html", FPSTR(index_html)); });
+  m_server.on("/", HTTP_GET, [this](AsyncWebServerRequest *request)
+              { handleRootRequest(request); });
 
   m_server.onNotFound([this](AsyncWebServerRequest *request)
                       { notFound(request); });
@@ -42,6 +45,12 @@ void WebServer::init()
       "/reload", HTTP_GET, [this](AsyncWebServerRequest *request)
       { handleReloadRequest(); 
         request->send(200, "text/plain", "OK"); });
+
+  m_server.on("/generate_204", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(200, "text/html", FPSTR(captive_portal_html)); });
+
+  m_server.on("/fwlink", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(200, "text/html", FPSTR(captive_portal_html)); });
 
   // Start the server
   m_server.begin();
@@ -79,6 +88,18 @@ void WebServer::handleSettingUpdate(AsyncWebServerRequest *request, uint8_t *dat
   }
 
   request->send(200, "application/json", "{\"message\":\"Setting updated successfully\"}");
+}
+
+void WebServer::handleRootRequest(AsyncWebServerRequest *request)
+{
+  if (m_useCaptivePortal)
+  {
+    request->send(200, "text/html", FPSTR(captive_portal_html));
+  }
+  else
+  {
+    request->send(200, "text/html", FPSTR(index_html));
+  }
 }
 
 void WebServer::handleConfigurationUpdate(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
@@ -135,6 +156,16 @@ void WebServer::registerObserver(Setting setting, CallbackString observer)
 void WebServer::registerReloadObserver(CallbackVoid observer)
 {
   m_reloadObservers.push_back(observer);
+}
+
+void WebServer::useCaptivePortal(bool useCaptivePortal)
+{
+  m_useCaptivePortal = useCaptivePortal;
+}
+
+bool WebServer::isCaptivePortal() const
+{
+  return m_useCaptivePortal;
 }
 
 void WebServer::handleRequest(Setting setting, uint8_t value)
