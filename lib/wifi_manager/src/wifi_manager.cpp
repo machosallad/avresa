@@ -32,6 +32,8 @@ void WiFiManager::setPassword(const String &password)
 bool WiFiManager::connectToWifi(uint8_t timeoutInSeconds)
 {
     Serial.println("Connecting to WiFi");
+    // Set WiFi mode to Station (client)
+    WiFi.mode(WIFI_STA);
     WiFi.begin(m_ssid, m_password);
 
     uint32_t start = millis();
@@ -61,6 +63,8 @@ void WiFiManager::startCaptivePortal()
     IPAddress apIP(172, 217, 28, 1);
     IPAddress netMask(255, 255, 255, 0);
 
+    WiFi.disconnect();
+    WiFi.mode(WIFI_AP);
     WiFi.softAPConfig(apIP, apIP, netMask);
     WiFi.softAP("AVRESA-AP", NULL);
     delay(100); // Wait for AP to start
