@@ -137,6 +137,16 @@
               '<div class="alert alert-danger">An error occurred.</div>';
           });
       }
+
+      function togglePasswordVisibility() {
+        var passwordField = document.getElementById("password");
+        var toggleCheckbox = document.getElementById("togglePassword");
+        if (toggleCheckbox.checked) {
+          passwordField.type = "text";
+        } else {
+          passwordField.type = "password";
+        }
+      }
     </script>
   </head>
   <body>
@@ -145,11 +155,12 @@
       <p>
         Device is not configured or is unable to connect with the current
         configuration. Please enter the WiFi SSID and password to configure the
-        device.
+        device and API key. Fields left blank will not be updated.
       </p>
       <p>
         Once the configuration is saved, restart the device to apply the new
-        settings.
+        settings. The access point will be disabled once the device is
+        connected.
       </p>
       <div class="my-4">
         <h2>WiFi Configuration</h2>
@@ -160,6 +171,12 @@
         <div class="form-group">
           <label for="password">WiFi Password:</label>
           <input type="password" id="password" placeholder="Enter Password" />
+          <input
+            type="checkbox"
+            id="togglePassword"
+            onclick="togglePasswordVisibility()"
+          />
+          Show Password
         </div>
         <button class="btn" onclick="saveWifiSettings()">
           Save WiFi Settings
