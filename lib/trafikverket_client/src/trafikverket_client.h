@@ -13,6 +13,7 @@ public:
     int getLastResponseCode();
     void setStationCode(const String &stationCode);
     String getTrainStations();
+    void setApiKey(const String &apiKey);
 
 private:
     String sendHttpRequest(const String &serverUrl, const String &body);

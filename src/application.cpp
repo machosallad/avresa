@@ -1,13 +1,14 @@
 #include "application.h"
 #include "train_announcement_string_builder.h"
 
-Application::Application(const Secrets &secret, const Parameter &parameter)
+Application::Application(const Secrets &secret, const Parameter &parameter, FileManager &fileManager)
     : m_secrets(secret),
       m_parameters(parameter),
       m_trafikverketClient(secret.apiKey, parameter.stationCode),
       m_wifiManager(secret.ssid, secret.password),
       m_display(parameter.brightness),
-      m_announcements(parameter.stationCode)
+      m_announcements(parameter.stationCode),
+      m_fileManager(fileManager)
 {
     // Initialization code
 }
@@ -28,9 +29,18 @@ void Application::init(uint8_t displayType)
     m_display.printText("Connect to WiFi", line++, Display::Color::Green);
     m_display.printText(m_wifiManager.getIpAddress(), line++, Display::Color::Green);
     m_webServer.init();
+
+    // Register observers for settings and configuration
     m_webServer.registerObserver(Setting::Brightness, std::bind(&Display::setBrightness, &m_display, std::placeholders::_1));
     m_webServer.registerObserver(Setting::StationCode, std::bind(&TrafikverketClient::setStationCode, &m_trafikverketClient, std::placeholders::_1));
     m_webServer.registerReloadObserver(std::bind(&Application::loadTrainStationAnnouncements, this));
+    m_webServer.registerObserver(Setting::ApiKey, std::bind(&TrafikverketClient::setApiKey, &m_trafikverketClient, std::placeholders::_1));
+    m_webServer.registerObserver(Setting::WifiSSID, std::bind(&WiFiManager::setSSID, &m_wifiManager, std::placeholders::_1));
+    m_webServer.registerObserver(Setting::WifiPassword, std::bind(&WiFiManager::setPassword, &m_wifiManager, std::placeholders::_1));
+    m_webServer.registerObserver(Setting::WifiSSID, std::bind(&FileManager::saveWifiSSID, &m_fileManager, std::placeholders::_1));
+    m_webServer.registerObserver(Setting::WifiPassword, std::bind(&FileManager::saveWifiPassword, &m_fileManager, std::placeholders::_1));
+    m_webServer.registerObserver(Setting::ApiKey, std::bind(&FileManager::saveApiKey, &m_fileManager, std::placeholders::_1));
+
     m_display.printText("Update departures", line);
 
     if (getLatestAnnouncements())

@@ -16,5 +16,8 @@ enum class Setting
     StationCode,     /**< Station code setting. */
     RequestInterval, /**< Request interval setting. */
     Layout,          /**< Layout setting. */
-    Color            /**< Color setting. */
+    Color,           /**< Color setting. */
+    WifiSSID,        /**< Wifi SSID setting. */
+    WifiPassword,    /**< Wifi password setting. */
+    ApiKey,          /**< API key setting. */
 };

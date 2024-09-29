@@ -1,103 +1,81 @@
 #include "file_manager.h"
+#include "spiffs_manager.h"
 
 FileManager::FileManager()
 {
 }
 
-void FileManager::init()
+bool FileManager::saveWifiSSID(const String &ssid)
 {
-    // Initialize SPIFFS
-    if (!SPIFFS.begin(true))
-    {
-        Serial.println("An error has occurred while mounting SPIFFS");
-    }
-    else
-    {
-        Serial.println("SPIFFS mounted successfully");
-    }
+    Serial.println("Saving SSID: " + ssid);
+    return saveToFile("/ssid.txt", ssid);
 }
 
-void FileManager::end()
+bool FileManager::saveWifiPassword(const String &password)
 {
-    SPIFFS.end();
+    Serial.println("Saving password: " + password);
+    return saveToFile("/password.txt", password);
 }
 
-bool FileManager::saveSecret(const char *ssid, const char *password, const char *apiKey)
+bool FileManager::saveApiKey(const String &apiKey)
 {
-    File file = SPIFFS.open(secretFilePath, FILE_WRITE);
-    if (!file)
+    Serial.println("Saving API Key: " + apiKey);
+    return saveToFile("/apikey.txt", apiKey);
+}
+
+bool FileManager::loadWifiSSID(String &ssid)
+{
+    return loadFromFile("/ssid.txt", ssid);
+}
+
+bool FileManager::loadWifiPassword(String &password)
+{
+    return loadFromFile("/password.txt", password);
+}
+
+bool FileManager::loadApiKey(String &apiKey)
+{
+    return loadFromFile("/apikey.txt", apiKey);
+}
+
+bool FileManager::saveToFile(const String &filename, const String &data)
+{
+    SPIFFSManager spiffsManager;
+    return spiffsManager.saveFile(filename, data);
+}
+
+bool FileManager::loadFromFile(const String &filename, String &data)
+{
+    SPIFFSManager spiffsManager;
+    return spiffsManager.loadFile(filename, data);
+}
+
+bool FileManager::saveBrightness(int brightness)
+{
+    SPIFFSManager spiffsManager;
+    return saveToFile("/brightness.txt", String(brightness));
+}
+
+bool FileManager::loadBrightness(int &brightness)
+{
+    SPIFFSManager spiffsManager;
+    String data;
+    if (!loadFromFile("/brightness.txt", data))
     {
-        Serial.println("Failed to open file for writing");
         return false;
     }
-    file.println(ssid);
-    file.println(password);
-    file.println(apiKey);
-    file.close();
+    brightness = data.toInt();
     return true;
 }
 
-bool FileManager::saveSecret(const Secrets &secrets)
+bool FileManager::saveStationCode(const String &stationCode)
 {
-    return saveSecret(secrets.ssid.c_str(), secrets.password.c_str(), secrets.apiKey.c_str());
+    SPIFFSManager spiffsManager;
+    return saveToFile("/station_code.txt", stationCode);
 }
 
-bool FileManager::loadSecret(Secrets &secrets)
+bool FileManager::loadStationCode(String &stationCode)
 {
-    String ssid, password, apiKey;
-    if (!loadSecret(ssid, password, apiKey))
-    {
-        return false;
-    }
-    secrets.ssid = ssid;
-    secrets.password = password;
-    secrets.apiKey = apiKey;
-    return true;
-}
-
-bool FileManager::loadSecret(String &ssid, String &password, String &apiKey)
-{
-    File file = SPIFFS.open(secretFilePath, FILE_READ);
-    if (!file)
-    {
-        Serial.println("Failed to open file for reading");
-        return false;
-    }
-    ssid = file.readStringUntil('\n');
-    password = file.readStringUntil('\n');
-    apiKey = file.readStringUntil('\n');
-    ssid.trim();
-    password.trim();
-    apiKey.trim();
-    file.close();
-    return true;
-}
-
-bool FileManager::saveParameter(const Parameter &parameter)
-{
-    File file = SPIFFS.open(parameterFilePath, FILE_WRITE);
-    if (!file)
-    {
-        Serial.println("Failed to open file for writing");
-        return false;
-    }
-    file.println(parameter.brightness);
-    file.println(parameter.stationCode);
-    file.close();
-    return true;
-}
-
-bool FileManager::loadParameter(Parameter &parameter)
-{
-    File file = SPIFFS.open(parameterFilePath, FILE_READ);
-    if (!file)
-    {
-        Serial.println("Failed to open file for reading");
-        return false;
-    }
-    parameter.brightness = file.readStringUntil('\n').toInt();
-    parameter.stationCode = file.readStringUntil('\n');
-    parameter.stationCode.trim();
-    file.close();
-    return true;
+    SPIFFSManager spiffsManager;
+    return loadFromFile("/station_code.txt", stationCode);
 }
