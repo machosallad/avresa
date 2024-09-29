@@ -58,7 +58,9 @@ void Application::init(uint8_t displayType)
     {
         Serial.println("Failed to connect to WiFi, start captive portal");
         m_display.printText("Connect to WiFi", line++, Display::Color::Red);
-        m_display.printText("Connect to AVRESA-AP", line);
+        m_display.printText("Access point started", line++);
+        m_display.printText("Connect to AVRESA-AP", line++);
+        m_display.printText("with phone to configure", line++);
         m_wifiManager.startCaptivePortal();
         m_webServer.useCaptivePortal(true);
     }
