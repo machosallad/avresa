@@ -21,12 +21,15 @@ public:
     void registerObserver(Setting setting, CallbackInt observer);
     void registerObserver(Setting setting, CallbackString observer);
     void registerReloadObserver(CallbackVoid observer);
+    void useCaptivePortal(bool useCaptivePortal);
+    bool isCaptivePortal() const;
 
 private:
     void handleRequest(Setting setting, uint8_t value);
     void handleRequest(Setting setting, const String &value);
     void handleReloadRequest();
     void handleSettingUpdate(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+    void handleRootRequest(AsyncWebServerRequest *request);
     void handleConfigurationUpdate(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
     void notFound(AsyncWebServerRequest *request);
 
@@ -34,6 +37,7 @@ private:
     std::map<Setting, std::vector<CallbackInt>> m_observersInt;
     std::map<Setting, std::vector<CallbackString>> m_observersString;
     std::vector<CallbackVoid> m_reloadObservers;
+    bool m_useCaptivePortal;
 };
 
 #endif // WEB_SERVER_H

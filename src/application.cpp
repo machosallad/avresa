@@ -24,11 +24,6 @@ void Application::init(uint8_t displayType)
     uint8_t line = 0;
     m_display.init(displayType);
     showSplashScreen();
-    m_display.printText("Connect to WiFi", line);
-    m_wifiManager.connectToWifi();
-    m_display.printText("Connect to WiFi", line++, Display::Color::Green);
-    m_display.printText(m_wifiManager.getIpAddress(), line++, Display::Color::Green);
-    m_webServer.init();
 
     // Register observers for settings and configuration
     m_webServer.registerObserver(Setting::Brightness, std::bind(&Display::setBrightness, &m_display, std::placeholders::_1));
@@ -41,18 +36,36 @@ void Application::init(uint8_t displayType)
     m_webServer.registerObserver(Setting::WifiPassword, std::bind(&FileManager::saveWifiPassword, &m_fileManager, std::placeholders::_1));
     m_webServer.registerObserver(Setting::ApiKey, std::bind(&FileManager::saveApiKey, &m_fileManager, std::placeholders::_1));
 
-    m_display.printText("Update departures", line);
-
-    if (getLatestAnnouncements())
+    m_display.printText("Connect to WiFi", line);
+    if (m_wifiManager.connectToWifi())
     {
-        m_display.printText("Update departures", line++, Display::Color::Green);
-        delay(1000);
-        updateDisplayInformation();
+        m_display.printText("Connect to WiFi", line++, Display::Color::Green);
+        m_display.printText(m_wifiManager.getIpAddress(), line++, Display::Color::Green);
+        m_display.printText("Update departures", line);
+
+        if (getLatestAnnouncements())
+        {
+            m_display.printText("Update departures", line++, Display::Color::Green);
+            delay(1000);
+            updateDisplayInformation();
+        }
+        else
+        {
+            m_display.printTextCentered("Failed to update!");
+        }
     }
     else
     {
-        m_display.printTextCentered("Failed to update!");
+        Serial.println("Failed to connect to WiFi, start captive portal");
+        m_display.printText("Connect to WiFi", line++, Display::Color::Red);
+        m_display.printText("Access point started", line++);
+        m_display.printText("Connect to AVRESA-AP", line++);
+        m_display.printText("with phone to configure", line++);
+        m_wifiManager.startCaptivePortal();
+        m_webServer.useCaptivePortal(true);
     }
+
+    m_webServer.init();
 }
 
 bool Application::loadStationNames()
@@ -147,17 +160,39 @@ unsigned long Application::getRequestInterval()
 
 void Application::run()
 {
-    unsigned long currentTime = millis();
-    if (currentTime - lastRequestTime >= nextRequestInterval)
+    // Update the current state based on the current conditions
+    if (m_webServer.isCaptivePortal())
     {
-        lastRequestTime = currentTime;
-        loadTrainStationAnnouncements();
-        nextRequestInterval = getRequestInterval();
+        m_state = State::CaptivePortal;
+    }
+    else if (!m_wifiManager.isConnected())
+    {
+        m_state = State::Error;
+    }
+    else
+    {
+        m_state = State::NormalOperation;
     }
 
-    if (!m_wifiManager.isConnected())
+    switch (m_state)
     {
-        m_display.printTextCentered("WiFi disconnected!");
+    case State::CaptivePortal:
+        m_wifiManager.processDNSRequests();
+        break;
+
+    case State::NormalOperation:
+    {
+        unsigned long currentTime = millis();
+        if (currentTime - lastRequestTime >= nextRequestInterval)
+        {
+            lastRequestTime = currentTime;
+            loadTrainStationAnnouncements();
+            nextRequestInterval = getRequestInterval();
+        }
+        break;
+    }
+    default:
+        break;
     }
 }
 

@@ -23,6 +23,13 @@ public:
     void showSplashScreen();
 
 private:
+    enum class State
+    {
+        CaptivePortal,
+        NormalOperation,
+        Error
+    };
+    State m_state = State::NormalOperation;
     bool loadStationNames();
     bool getLatestAnnouncements();
     void updateDisplayInformation();
