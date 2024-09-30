@@ -11,6 +11,7 @@
 #include "station_lockup.h"
 #include "eeprom_manager.h"
 #include "file_manager.h"
+#include "ota_manager.h"
 
 class Application
 {
