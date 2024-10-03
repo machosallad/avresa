@@ -16,7 +16,7 @@ FileManager fileManager;
  */
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(1000);
   EEPROMManager eeprom(64, 0);
 
