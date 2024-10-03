@@ -16,3 +16,4 @@ include/config.h
 ### Generated filed ###
 lib/web_server/src/index_html.h
 lib/web_server/src/captive_portal_html.h
+lib/ota_manager/src/ota_constants.h
