@@ -6,12 +6,14 @@
 #include <esp_partition.h>
 #include "ota_manager.h"
 #include <ArduinoJson.h>
+#include "ota_constants.h"
+#include "spiffs_manager.h"
 
-const String OtaManager::m_firmwareInfoUrl = "https://github.com/machosallad/esp32-ota-binaries/releases/latest/download/firmware.json"; // Firmware info file URL
-const String OtaManager::m_firmwareUrl = "https://github.com/machosallad/esp32-ota-binaries/releases/latest/download/firmware.bin";
-const String OtaManager::m_firmwareChecksumUrl = "https://github.com/machosallad/esp32-ota-binaries/releases/latest/download/firmware.md5";
+const String OtaManager::m_firmwareInfoUrl = OTA_FIRMWARE_INFO_URL;         // Firmware info file URL
+const String OtaManager::m_firmwareUrl = OTA_FIRMWARE_URL;                  // Firmware file URL
+const String OtaManager::m_firmwareChecksumUrl = OTA_FIRMWARE_CHECKSUM_URL; // Firmware checksum file URL
 
-OtaManager::OtaManager(const String &currentVersion) : m_currentVersion(currentVersion)
+OtaManager::OtaManager(const String &currentVersion, Display &display) : m_currentVersion(currentVersion), m_display(display)
 {
 }
 
@@ -69,41 +71,27 @@ bool OtaManager::updateAvailable()
     }
 }
 
-void OtaManager::downloadOta()
+bool OtaManager::downloadOta()
 {
     const char *firmwarePath = "/firmware.bin";
     const char *checksumPath = "/firmware.bin.md5";
+    bool result = false;
+    SPIFFSManager spiffsManager;
+
+    m_display.clearScreen();
+    m_display.printText("Downloading update", Display::Line::Line1);
+    m_display.printText("Installing update", Display::Line::Line3);
 
     if (downloadFile(m_firmwareUrl, firmwarePath) && downloadFile(m_firmwareChecksumUrl, checksumPath))
     {
-        String calculatedMD5 = calculateMD5(firmwarePath);
-        File checksumFile = SPIFFS.open(checksumPath);
-        if (!checksumFile)
-        {
-            Serial.println("Failed to open checksum file");
-            return;
-        }
-        String checksumLine = checksumFile.readStringUntil('\n');
-        checksumFile.close();
-
-        // Extract the checksum part from the line
-        int spaceIndex = checksumLine.indexOf(' ');
-        String expectedMD5;
-        if (spaceIndex != -1)
-            expectedMD5 = checksumLine.substring(0, spaceIndex);
-        else
-            expectedMD5 = checksumLine;
-
-        expectedMD5.trim(); // Remove any whitespace or newline characters
-        Serial.println("Calculated MD5: " + calculatedMD5);
-        Serial.println("Expected MD5: " + expectedMD5);
-
-        if (calculatedMD5.equalsIgnoreCase(expectedMD5))
+        Serial.println("Downloaded firmware and checksum file");
+        if (verifyChecksum(firmwarePath, checksumPath))
         {
             Serial.println("MD5 checksum matches, applying firmware...");
             if (applyFirmware(firmwarePath))
             {
                 Serial.println("Firmware update successful");
+                result = true;
             }
             else
             {
@@ -119,6 +107,13 @@ void OtaManager::downloadOta()
     {
         Serial.println("Failed to download firmware or checksum file");
     }
+
+    return result;
+}
+
+String OtaManager::getCurrentVersion()
+{
+    return m_currentVersion;
 }
 
 bool OtaManager::downloadFile(const String &url, const String &path)
@@ -128,6 +123,7 @@ bool OtaManager::downloadFile(const String &url, const String &path)
     String currentUrl = url;
     int maxRedirects = 5; // Maximum number of redirects to follow
 
+    Serial.println("Discovering redirects...");
     for (int i = 0; i < maxRedirects; i++)
     {
         http.begin(currentUrl);
@@ -156,11 +152,13 @@ bool OtaManager::downloadFile(const String &url, const String &path)
         }
 
         WiFiClient *stream = http.getStreamPtr();
-        uint8_t buffer[128] = {0};
-        int len = http.getSize();
+        uint8_t buffer[1024] = {0}; // Increased buffer size to 1024 bytes
+        int totalLength = http.getSize();
+        int len = totalLength;
         int totalRead = 0;
 
         Serial.println("Downloading file...");
+        int downloadedLength = 0;
         while (http.connected() && (len > 0 || len == -1))
         {
             size_t size = stream->available();
@@ -168,17 +166,28 @@ bool OtaManager::downloadFile(const String &url, const String &path)
             {
                 int c = stream->readBytes(buffer, ((size > sizeof(buffer)) ? sizeof(buffer) : size));
                 file.write(buffer, c);
-                totalRead += c;
+                downloadedLength += c;
+                if (totalLength > 0)
+                {
+                    Serial.printf("Downloaded %d of %d bytes (%.2f%%)\r", downloadedLength, totalLength, (downloadedLength * 100.0) / totalLength);
+                    m_display.fillColorPercentage((downloadedLength * 100) / totalLength, Display::Color::Orange, Display::Line::Line2, 1);
+                }
+                else
+                {
+                    Serial.printf("Downloaded %d bytes\n", downloadedLength);
+                }
                 if (len > 0)
                 {
                     len -= c;
                 }
             }
-            delay(1); // Add a small delay to allow other tasks to run
+            else
+            {
+                delay(10); // Slight delay to avoid busy-waiting
+            }
         }
 
         file.close();
-        Serial.printf("Downloaded %d bytes\n", totalRead);
         return true;
     }
     else
@@ -216,8 +225,10 @@ bool OtaManager::applyFirmware(const String &path)
     }
 
     // Set up progress callback
-    Update.onProgress([](size_t done, size_t total)
-                      { Serial.printf("Progress: %u%%\r", (done * 100) / total); });
+    Update.onProgress([this](size_t done, size_t total)
+                      {
+        Serial.printf("Progress: %u%%\r", (done * 100) / total);
+                        m_display.fillColorPercentage((done * 100) / total, Display::Color::Orange, Display::Line::Line4, 1); });
 
     size_t written = Update.writeStream(file);
     if (written == fileSize)
@@ -234,8 +245,7 @@ bool OtaManager::applyFirmware(const String &path)
         Serial.println("OTA done!");
         if (Update.isFinished())
         {
-            Serial.println("Update successfully completed. Rebooting.");
-            ESP.restart();
+            Serial.println("Update successfully completed. Applied on next boot.");
             return true;
         }
         else
@@ -273,4 +283,33 @@ String OtaManager::calculateMD5(const String &path)
     file.close();
     md5.calculate();
     return md5.toString();
+}
+
+bool OtaManager::verifyChecksum(const String &file, const String &checksumPath)
+{
+    File checksumFile = SPIFFS.open(checksumPath);
+    if (!checksumFile)
+    {
+        Serial.println("Failed to open checksum file");
+        return false;
+    }
+
+    String checksumLine = checksumFile.readStringUntil('\n');
+    checksumFile.close();
+
+    // Extract the checksum part from the line
+    int spaceIndex = checksumLine.indexOf(' ');
+    String expectedMD5;
+    if (spaceIndex != -1)
+        expectedMD5 = checksumLine.substring(0, spaceIndex);
+    else
+        expectedMD5 = checksumLine;
+
+    expectedMD5.trim(); // Remove any whitespace or newline characters
+    String calculatedMD5 = calculateMD5(file);
+
+    Serial.println("Calculated MD5: " + calculatedMD5);
+    Serial.println("Expected MD5: " + expectedMD5);
+
+    return calculatedMD5.equalsIgnoreCase(expectedMD5);
 }
