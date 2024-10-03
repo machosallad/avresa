@@ -21,7 +21,6 @@ Application::~Application()
 void Application::init(uint8_t displayType)
 {
     // Fire up the system by connecting to WiFi, coniguring the Web server and fetching the latest announcements
-    uint8_t line = 0;
     m_display.init(displayType);
     showSplashScreen();
 
@@ -36,16 +35,16 @@ void Application::init(uint8_t displayType)
     m_webServer.registerObserver(Setting::WifiPassword, std::bind(&FileManager::saveWifiPassword, &m_fileManager, std::placeholders::_1));
     m_webServer.registerObserver(Setting::ApiKey, std::bind(&FileManager::saveApiKey, &m_fileManager, std::placeholders::_1));
 
-    m_display.printText("Connect to WiFi", line);
+    m_display.printText("Connect to WiFi", Display::Line::Line1);
     if (m_wifiManager.connectToWifi())
     {
-        m_display.printText("Connect to WiFi", line++, Display::Color::Green);
-        m_display.printText(m_wifiManager.getIpAddress(), line++, Display::Color::Green);
-        m_display.printText("Update departures", line);
+        m_display.printText("Connect to WiFi", Display::Line::Line1, Display::Color::Green);
+        m_display.printText(m_wifiManager.getIpAddress(), Display::Line::Line2, Display::Color::Green);
+        m_display.printText("Update departures", Display::Line::Line3);
 
         if (getLatestAnnouncements())
         {
-            m_display.printText("Update departures", line++, Display::Color::Green);
+            m_display.printText("Update departures", Display::Line::Line3, Display::Color::Green);
             delay(1000);
             updateDisplayInformation();
         }
@@ -57,10 +56,10 @@ void Application::init(uint8_t displayType)
     else
     {
         Serial.println("Failed to connect to WiFi, start captive portal");
-        m_display.printText("Connect to WiFi", line++, Display::Color::Red);
-        m_display.printText("Access point started", line++);
-        m_display.printText("Connect to AVRESA-AP", line++);
-        m_display.printText("with phone to configure", line++);
+        m_display.printText("Configuration required", Display::Line::Line1, Display::Color::Red);
+        m_display.printText("Access point started", Display::Line::Line2);
+        m_display.printText("Connect to AVRESA-AP", Display::Line::Line3);
+        m_display.printText("with phone to configure", Display::Line::Line4);
         m_wifiManager.startCaptivePortal();
         m_webServer.useCaptivePortal(true);
     }
