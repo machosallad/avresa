@@ -38,6 +38,18 @@ jobs:
         id: gitversion # step id used as reference for output values
         uses: gittools/actions/gitversion/execute@v3.0.0
 
+      - name: Generate constants header for OTA
+        run: |
+          echo "#ifndef OTA_CONSTANTS_H" > lib/ota_manager/src/ota_constants.h
+          echo "#define OTA_CONSTANTS_H" >> lib/ota_manager/src/ota_constants.h
+          echo "#include <Arduino.h>" >> lib/ota_manager/src/ota_constants.h
+          echo "" >> lib/ota_manager/src/ota_constants.h
+          echo "const String OTA_FIRMWARE_INFO_URL = \"${{ secrets.FIRMWARE_INFO_URL }}\";" >> lib/ota_manager/src/ota_constants.h
+          echo "const String OTA_FIRMWARE_URL = \"${{ secrets.FIRMWARE_URL }}\";" >> lib/ota_manager/src/ota_constants.h
+          echo "const String OTA_FIRMWARE_CHECKSUM_URL = \"${{ secrets.FIRMWARE_CHECKSUM_URL }}\";" >> lib/ota_manager/src/ota_constants.h
+          echo "" >> lib/ota_manager/src/ota_constants.h
+          echo "#endif // OTA_CONSTANTS_H" >> lib/ota_manager/src/ota_constants.h
+
       - name: Inject secrets into config.h
         run: |
           echo "#ifndef CONFIG_H" > include/config.h
