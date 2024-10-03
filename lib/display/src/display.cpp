@@ -79,6 +79,24 @@ void Display::setBrightness(uint8_t brightness)
     dma_display->setBrightness(brightness);
 }
 
+void Display::fillColorPercentage(uint8_t percentage, Color color)
+{
+    fillColorPercentage(percentage, color, 0, m_matrixHeight, 0);
+}
+
+void Display::fillColorPercentage(uint8_t percentage, Color color, int16_t y, int16_t height, uint8_t paddingTop)
+{
+    int16_t fillWidth = (m_matrixWidth * m_matrixChainLength * percentage) / 100;
+    if (fillWidth > 0)
+        dma_display->fillRect(0, y + paddingTop, fillWidth, height - paddingTop, this->color565(color));
+}
+
+void Display::fillColorPercentage(uint8_t percentage, Color color, Line line, uint8_t paddingTop)
+{
+    uint8_t y = static_cast<int16_t>(line) * fontSizeInPixels(m_currentFont);
+    fillColorPercentage(percentage, color, y, fontSizeInPixels(m_currentFont), paddingTop);
+}
+
 uint16_t Display::color565(Color color)
 {
     switch (color)
@@ -119,6 +137,13 @@ void Display::printText(String text, int16_t line, Color color)
 {
     int16_t x = 0;
     int16_t y = line * fontSizeInPixels(m_currentFont);
+    printText(text, x, y, color);
+}
+
+void Display::printText(String text, Line line, Color color)
+{
+    int16_t x = 0;
+    int16_t y = static_cast<int16_t>(line) * fontSizeInPixels(m_currentFont);
     printText(text, x, y, color);
 }
 

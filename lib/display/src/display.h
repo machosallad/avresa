@@ -37,10 +37,21 @@ public:
         NumberOfDisplayTypes
     };
 
-    void init(int displayType);
+    enum class Line
+    {
+        Line1 = 0,
+        Line2 = 1,
+        Line3 = 2,
+        Line4 = 3,
+        NumberOfLines = 4
+    };
+
+    void
+    init(int displayType);
     void demo();
     void printText(String text, int16_t x, int16_t y, Color color = Color::Orange);
     void printText(String text, int16_t line, Color color = Color::Orange);
+    void printText(String text, Line line, Color color = Color::Orange);
     void printTextRightAligned(String text, int16_t line, Color color = Color::Orange);
     void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::Orange);
     void printTextCentered(String text, Color color = Color::Orange);
@@ -50,6 +61,9 @@ public:
     Font getFont();
     uint16_t getDisplayWidth();
     void setBrightness(uint8_t brightness);
+    void fillColorPercentage(uint8_t percentage, Color color = Color::Green);
+    void fillColorPercentage(uint8_t percentage, Color color, int16_t y, int16_t height, uint8_t paddingTop = 0);
+    void fillColorPercentage(uint8_t percentage, Color color, Line line, uint8_t paddingTop = 0);
 
     uint16_t color565(Color color);
 
