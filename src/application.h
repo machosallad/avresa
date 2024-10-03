@@ -49,6 +49,7 @@ private:
     Secrets m_secrets;
     Parameter m_parameters;
     FileManager &m_fileManager;
+    OtaManager m_otaManager;
 };
 
 #endif // APPLICATION_H

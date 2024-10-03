@@ -8,7 +8,8 @@ Application::Application(const Secrets &secret, const Parameter &parameter, File
       m_wifiManager(secret.ssid, secret.password),
       m_display(parameter.brightness),
       m_announcements(parameter.stationCode),
-      m_fileManager(fileManager)
+      m_fileManager(fileManager),
+      m_otaManager("0.0.1", m_display)
 {
     // Initialization code
 }
@@ -199,6 +200,8 @@ void Application::showSplashScreen()
 {
     m_display.clearScreen();
     m_display.printTextCentered("Avgång by MakerMelin", Display::Color::Green);
+    delay(2000);
+    m_display.printTextCentered("Version: " + m_otaManager.getCurrentVersion(), Display::Color::Green);
     delay(2000);
     m_display.clearScreen();
 }
