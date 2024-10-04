@@ -9,7 +9,7 @@ Application::Application(const Secrets &secret, const Parameter &parameter, File
       m_display(parameter.brightness),
       m_announcements(parameter.stationCode),
       m_fileManager(fileManager),
-      m_otaManager("0.0.1", m_display)
+      m_otaManager(Version::semver(), m_display)
 {
     // Initialization code
 }
@@ -57,6 +57,7 @@ void Application::init(uint8_t displayType)
     else
     {
         Serial.println("Failed to connect to WiFi, start captive portal");
+        m_display.clearScreen();
         m_display.printText("Configuration required", Display::Line::Line1, Display::Color::Red);
         m_display.printText("Access point started", Display::Line::Line2);
         m_display.printText("Connect to AVRESA-AP", Display::Line::Line3);
@@ -201,7 +202,7 @@ void Application::showSplashScreen()
     m_display.clearScreen();
     m_display.printTextCentered("Avgång by MakerMelin", Display::Color::Green);
     delay(2000);
-    m_display.printTextCentered("Version: " + m_otaManager.getCurrentVersion(), Display::Color::Green);
+    m_display.printTextCentered(Version::semver(), Display::Color::Green);
     delay(2000);
     m_display.clearScreen();
 }

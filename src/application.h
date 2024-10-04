@@ -12,6 +12,7 @@
 #include "eeprom_manager.h"
 #include "file_manager.h"
 #include "ota_manager.h"
+#include "version.h"
 
 class Application
 {

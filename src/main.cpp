@@ -16,6 +16,7 @@ FileManager fileManager;
 void setup()
 {
   Serial.begin(115200);
+  Serial.println("Version: " + String(Version::semver()));
   delay(1000);
   EEPROMManager eeprom(64, 0);
 
