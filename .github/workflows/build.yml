@@ -86,6 +86,7 @@ jobs:
           md5sum $FIRMWARE_PATH > $FIRMWARE_PATH.md5
           echo "MD5 checksum generated for $FIRMWARE_PATH"
           echo "md5_file_path=$FIRMWARE_PATH.md5" >> $GITHUB_OUTPUT
+          echo "firmware_file_path=$FIRMWARE_PATH" >> $GITHUB_OUTPUT
 
       - name: Generate firmware information JSON
         id: generate_firmware_info
@@ -108,3 +109,9 @@ jobs:
         with:
           name: firmware-info
           path: ${{ steps.generate_firmware_info.outputs.firmware_info_path }}
+
+      - name: Store Firmware Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: ${{ steps.generate_md5.outputs.firmware_file_path }}
