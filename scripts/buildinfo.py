@@ -12,7 +12,7 @@ def generate_version_class():
         major = version_info['Major']
         minor = version_info['Minor']
         patch = version_info['Patch']
-        semver = version_info['SemVer']
+        semver = version_info['FullSemVer']
         tag = version_info['PreReleaseTag']
         build_date = version_info['CommitDate']
 
