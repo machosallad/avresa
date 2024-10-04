@@ -8,7 +8,8 @@ Application::Application(const Secrets &secret, const Parameter &parameter, File
       m_wifiManager(secret.ssid, secret.password),
       m_display(parameter.brightness),
       m_announcements(parameter.stationCode),
-      m_fileManager(fileManager)
+      m_fileManager(fileManager),
+      m_otaManager(Version::semver(), m_display)
 {
     // Initialization code
 }
@@ -21,7 +22,6 @@ Application::~Application()
 void Application::init(uint8_t displayType)
 {
     // Fire up the system by connecting to WiFi, coniguring the Web server and fetching the latest announcements
-    uint8_t line = 0;
     m_display.init(displayType);
     showSplashScreen();
 
@@ -36,16 +36,33 @@ void Application::init(uint8_t displayType)
     m_webServer.registerObserver(Setting::WifiPassword, std::bind(&FileManager::saveWifiPassword, &m_fileManager, std::placeholders::_1));
     m_webServer.registerObserver(Setting::ApiKey, std::bind(&FileManager::saveApiKey, &m_fileManager, std::placeholders::_1));
 
-    m_display.printText("Connect to WiFi", line);
+    m_display.printText("Connect to WiFi", Display::Line::Line1);
     if (m_wifiManager.connectToWifi())
     {
-        m_display.printText("Connect to WiFi", line++, Display::Color::Green);
-        m_display.printText(m_wifiManager.getIpAddress(), line++, Display::Color::Green);
-        m_display.printText("Update departures", line);
+        m_display.printText("Connect to WiFi", Display::Line::Line1, Display::Color::Green);
+        m_display.printText(m_wifiManager.getIpAddress(), Display::Line::Line2, Display::Color::Green);
+
+        if (m_otaManager.updateAvailable())
+        {
+            if (m_otaManager.downloadOta())
+            {
+                m_display.printTextCentered("Update successful", Display::Color::Green);
+                delay(2000);
+                m_display.clearScreen();
+                ESP.restart();
+            }
+            else
+            {
+                m_display.printTextCentered("Update failed", Display::Color::Red);
+                delay(2000);
+            }
+        }
+
+        m_display.printText("Update departures", Display::Line::Line3, Display::Color::Orange, true);
 
         if (getLatestAnnouncements())
         {
-            m_display.printText("Update departures", line++, Display::Color::Green);
+            m_display.printText("Update departures", Display::Line::Line3, Display::Color::Green);
             delay(1000);
             updateDisplayInformation();
         }
@@ -57,10 +74,11 @@ void Application::init(uint8_t displayType)
     else
     {
         Serial.println("Failed to connect to WiFi, start captive portal");
-        m_display.printText("Connect to WiFi", line++, Display::Color::Red);
-        m_display.printText("Access point started", line++);
-        m_display.printText("Connect to AVRESA-AP", line++);
-        m_display.printText("with phone to configure", line++);
+        m_display.clearScreen();
+        m_display.printText("Configuration required", Display::Line::Line1, Display::Color::Red);
+        m_display.printText("Access point started", Display::Line::Line2);
+        m_display.printText("Connect to AVRESA-AP", Display::Line::Line3);
+        m_display.printText("with phone to configure", Display::Line::Line4);
         m_wifiManager.startCaptivePortal();
         m_webServer.useCaptivePortal(true);
     }
@@ -200,6 +218,8 @@ void Application::showSplashScreen()
 {
     m_display.clearScreen();
     m_display.printTextCentered("Avgång by MakerMelin", Display::Color::Green);
+    delay(2000);
+    m_display.printTextCentered(Version::semver(), Display::Color::Green);
     delay(2000);
     m_display.clearScreen();
 }

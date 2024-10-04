@@ -11,6 +11,8 @@
 #include "station_lockup.h"
 #include "eeprom_manager.h"
 #include "file_manager.h"
+#include "ota_manager.h"
+#include "version.h"
 
 class Application
 {
@@ -48,6 +50,7 @@ private:
     Secrets m_secrets;
     Parameter m_parameters;
     FileManager &m_fileManager;
+    OtaManager m_otaManager;
 };
 
 #endif // APPLICATION_H

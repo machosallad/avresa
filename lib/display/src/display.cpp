@@ -79,6 +79,24 @@ void Display::setBrightness(uint8_t brightness)
     dma_display->setBrightness(brightness);
 }
 
+void Display::fillColorPercentage(uint8_t percentage, Color color)
+{
+    fillColorPercentage(percentage, color, 0, m_matrixHeight, 0);
+}
+
+void Display::fillColorPercentage(uint8_t percentage, Color color, int16_t y, int16_t height, uint8_t paddingTop)
+{
+    int16_t fillWidth = (m_matrixWidth * m_matrixChainLength * percentage) / 100;
+    if (fillWidth > 0)
+        dma_display->fillRect(0, y + paddingTop, fillWidth, height - paddingTop, this->color565(color));
+}
+
+void Display::fillColorPercentage(uint8_t percentage, Color color, Line line, uint8_t paddingTop)
+{
+    uint8_t y = static_cast<int16_t>(line) * fontSizeInPixels(m_currentFont);
+    fillColorPercentage(percentage, color, y, fontSizeInPixels(m_currentFont), paddingTop);
+}
+
 uint16_t Display::color565(Color color)
 {
     switch (color)
@@ -105,8 +123,12 @@ uint16_t Display::color565(Color color)
     }
 }
 
-void Display::printText(String text, int16_t x, int16_t y, Color color)
+void Display::printText(String text, int16_t x, int16_t y, Color color, bool clearScreen)
 {
+    if (clearScreen)
+    {
+        dma_display->clearScreen();
+    }
     sanitizeText(text);
     y += fontSizeInPixels(m_currentFont); // Shift the text down to the baseline based on the font size
     dma_display->setTextSize(1);          // size 1 == 8 pixels or 12 pixels high depending on the font
@@ -115,11 +137,18 @@ void Display::printText(String text, int16_t x, int16_t y, Color color)
     dma_display->print(text);
 }
 
-void Display::printText(String text, int16_t line, Color color)
+void Display::printText(String text, int16_t line, Color color, bool clearScreen)
 {
     int16_t x = 0;
     int16_t y = line * fontSizeInPixels(m_currentFont);
-    printText(text, x, y, color);
+    printText(text, x, y, color, clearScreen);
+}
+
+void Display::printText(String text, Line line, Color color, bool clearScreen)
+{
+    int16_t x = 0;
+    int16_t y = static_cast<int16_t>(line) * fontSizeInPixels(m_currentFont);
+    printText(text, x, y, color, clearScreen);
 }
 
 void Display::printTextRightAligned(String text, int16_t line, Color color)

@@ -38,27 +38,44 @@ jobs:
         id: gitversion # step id used as reference for output values
         uses: gittools/actions/gitversion/execute@v3.0.0
 
-      - name: Inject secrets into config.h
+      - name: Set CI environment variable
+        run: echo "CI=true" >> $GITHUB_ENV
+
+      - name: Generate version.h
         run: |
-          echo "#ifndef CONFIG_H" > include/config.h
-          echo "#define CONFIG_H" >> include/config.h
-          echo "const char *WIFI_SSID = \"$WIFI_SSID\";" >> include/config.h
-          echo "const char *WIFI_PASSWORD = \"$WIFI_PASSWORD\";" >> include/config.h
-          echo "const char *SERVER_KEY = \"$SERVER_KEY\";" >> include/config.h
-          echo "const char *STATION_CODE = \"$STATION_CODE\";" >> include/config.h
-          echo "const char *VERSION = \"${{ steps.gitversion.outputs.FullSemVer }}\";" >> include/config.h
-          echo "#endif // CONFIG_H" >> include/config.h
-        env:
-          WIFI_SSID: ${{ secrets.WIFI_SSID }}
-          WIFI_PASSWORD: ${{ secrets.WIFI_PASSWORD }}
-          SERVER_KEY: ${{ secrets.SERVER_KEY }}
-          STATION_CODE: ${{ secrets.STATION_CODE }}
+          echo "#ifndef VERSION_H" > include/version.h
+          echo "#define VERSION_H" >> include/version.h
+          echo "" >> include/version.h
+          echo "class Version {" >> include/version.h
+          echo "public:" >> include/version.h
+          echo "    static const char* major() { return \"${{ steps.gitversion.outputs.Major }}\"; }" >> include/version.h
+          echo "    static const char* minor() { return \"${{ steps.gitversion.outputs.Minor }}\"; }" >> include/version.h
+          echo "    static const char* patch() { return \"${{ steps.gitversion.outputs.Patch }}\"; }" >> include/version.h
+          echo "    static const char* semver() { return \"${{ steps.gitversion.outputs.FullSemVer }}\"; }" >> include/version.h
+          echo "    static const char* tag() { return \"${{ steps.gitversion.outputs.PreReleaseTag }}\"; }" >> include/version.h
+          echo "    static const char* date() { return \"${{ steps.gitversion.outputs.CommitDate }}\"; }" >> include/version.h
+          echo "};" >> include/version.h
+          echo "" >> include/version.h
+          echo "#endif // VERSION_H" >> include/version.h
+
+      - name: Generate constants header for OTA
+        run: |
+          echo "#ifndef OTA_CONSTANTS_H" > lib/ota_manager/src/ota_constants.h
+          echo "#define OTA_CONSTANTS_H" >> lib/ota_manager/src/ota_constants.h
+          echo "#include <Arduino.h>" >> lib/ota_manager/src/ota_constants.h
+          echo "" >> lib/ota_manager/src/ota_constants.h
+          echo "const String OTA_FIRMWARE_INFO_URL = \"${{ secrets.FIRMWARE_INFO_URL }}\";" >> lib/ota_manager/src/ota_constants.h
+          echo "const String OTA_FIRMWARE_URL = \"${{ secrets.FIRMWARE_URL }}\";" >> lib/ota_manager/src/ota_constants.h
+          echo "" >> lib/ota_manager/src/ota_constants.h
+          echo "#endif // OTA_CONSTANTS_H" >> lib/ota_manager/src/ota_constants.h
 
       - name: Echo Version Number
         run: 'echo "Version: ${{ steps.gitversion.outputs.FullSemVer }}"'
 
       - name: Build with PlatformIO
         run: platformio run
+        env:
+          CI: ${{ env.CI }}
 
       - name: Generate MD5 Checksum
         id: generate_md5
@@ -71,9 +88,32 @@ jobs:
           md5sum $FIRMWARE_PATH > $FIRMWARE_PATH.md5
           echo "MD5 checksum generated for $FIRMWARE_PATH"
           echo "md5_file_path=$FIRMWARE_PATH.md5" >> $GITHUB_OUTPUT
+          echo "firmware_file_path=$FIRMWARE_PATH" >> $GITHUB_OUTPUT
+
+      - name: Generate firmware information JSON
+        id: generate_firmware_info
+        run: |
+          echo "{" > firmware.json
+          echo "  \"version\": \"${{ steps.gitversion.outputs.FullSemVer }}\"," >> firmware.json
+          echo "  \"date\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"," >> firmware.json
+          echo "  \"md5\": \"$(cat ${{ steps.generate_md5.outputs.md5_file_path }} | cut -d ' ' -f 1)\"" >> firmware.json
+          echo "}" >> firmware.json
+          echo "firmware_info_path=firmware.json" >> $GITHUB_OUTPUT
 
       - name: Store MD5 Checksum
         uses: actions/upload-artifact@v4
         with:
           name: firmware-md5
           path: ${{ steps.generate_md5.outputs.md5_file_path }}
+
+      - name: Store Firmware Information
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-info
+          path: ${{ steps.generate_firmware_info.outputs.firmware_info_path }}
+
+      - name: Store Firmware Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: ${{ steps.generate_md5.outputs.firmware_file_path }}
