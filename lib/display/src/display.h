@@ -49,9 +49,9 @@ public:
     void
     init(int displayType);
     void demo();
-    void printText(String text, int16_t x, int16_t y, Color color = Color::Orange);
-    void printText(String text, int16_t line, Color color = Color::Orange);
-    void printText(String text, Line line, Color color = Color::Orange);
+    void printText(String text, int16_t x, int16_t y, Color color = Color::Orange, bool clearScreen = false);
+    void printText(String text, int16_t line, Color color = Color::Orange, bool clearScreen = false);
+    void printText(String text, Line line, Color color = Color::Orange, bool clearScreen = false);
     void printTextRightAligned(String text, int16_t line, Color color = Color::Orange);
     void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::Orange);
     void printTextCentered(String text, Color color = Color::Orange);

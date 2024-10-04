@@ -123,8 +123,12 @@ uint16_t Display::color565(Color color)
     }
 }
 
-void Display::printText(String text, int16_t x, int16_t y, Color color)
+void Display::printText(String text, int16_t x, int16_t y, Color color, bool clearScreen)
 {
+    if (clearScreen)
+    {
+        dma_display->clearScreen();
+    }
     sanitizeText(text);
     y += fontSizeInPixels(m_currentFont); // Shift the text down to the baseline based on the font size
     dma_display->setTextSize(1);          // size 1 == 8 pixels or 12 pixels high depending on the font
@@ -133,18 +137,18 @@ void Display::printText(String text, int16_t x, int16_t y, Color color)
     dma_display->print(text);
 }
 
-void Display::printText(String text, int16_t line, Color color)
+void Display::printText(String text, int16_t line, Color color, bool clearScreen)
 {
     int16_t x = 0;
     int16_t y = line * fontSizeInPixels(m_currentFont);
-    printText(text, x, y, color);
+    printText(text, x, y, color, clearScreen);
 }
 
-void Display::printText(String text, Line line, Color color)
+void Display::printText(String text, Line line, Color color, bool clearScreen)
 {
     int16_t x = 0;
     int16_t y = static_cast<int16_t>(line) * fontSizeInPixels(m_currentFont);
-    printText(text, x, y, color);
+    printText(text, x, y, color, clearScreen);
 }
 
 void Display::printTextRightAligned(String text, int16_t line, Color color)
