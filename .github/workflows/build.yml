@@ -51,7 +51,7 @@ jobs:
           echo "    static const char* major() { return \"${{ steps.gitversion.outputs.Major }}\"; }" >> include/version.h
           echo "    static const char* minor() { return \"${{ steps.gitversion.outputs.Minor }}\"; }" >> include/version.h
           echo "    static const char* patch() { return \"${{ steps.gitversion.outputs.Patch }}\"; }" >> include/version.h
-          echo "    static const char* semver() { return \"${{ steps.gitversion.outputs.SemVer }}\"; }" >> include/version.h
+          echo "    static const char* semver() { return \"${{ steps.gitversion.outputs.FullSemVer }}\"; }" >> include/version.h
           echo "    static const char* tag() { return \"${{ steps.gitversion.outputs.PreReleaseTag }}\"; }" >> include/version.h
           echo "    static const char* date() { return \"${{ steps.gitversion.outputs.CommitDate }}\"; }" >> include/version.h
           echo "};" >> include/version.h
