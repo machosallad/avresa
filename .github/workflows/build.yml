@@ -38,6 +38,26 @@ jobs:
         id: gitversion # step id used as reference for output values
         uses: gittools/actions/gitversion/execute@v3.0.0
 
+      - name: Set CI environment variable
+        run: echo "CI=true" >> $GITHUB_ENV
+
+      - name: Generate version.h
+        run: |
+          echo "#ifndef VERSION_H" > include/version.h
+          echo "#define VERSION_H" >> include/version.h
+          echo "" >> include/version.h
+          echo "class Version {" >> include/version.h
+          echo "public:" >> include/version.h
+          echo "    static const char* major() { return \"${{ steps.gitversion.outputs.Major }}\"; }" >> include/version.h
+          echo "    static const char* minor() { return \"${{ steps.gitversion.outputs.Minor }}\"; }" >> include/version.h
+          echo "    static const char* patch() { return \"${{ steps.gitversion.outputs.Patch }}\"; }" >> include/version.h
+          echo "    static const char* semver() { return \"${{ steps.gitversion.outputs.SemVer }}\"; }" >> include/version.h
+          echo "    static const char* tag() { return \"${{ steps.gitversion.outputs.PreReleaseTag }}\"; }" >> include/version.h
+          echo "    static const char* date() { return \"${{ steps.gitversion.outputs.CommitDate }}\"; }" >> include/version.h
+          echo "};" >> include/version.h
+          echo "" >> include/version.h
+          echo "#endif // VERSION_H" >> include/version.h
+
       - name: Generate constants header for OTA
         run: |
           echo "#ifndef OTA_CONSTANTS_H" > lib/ota_manager/src/ota_constants.h
