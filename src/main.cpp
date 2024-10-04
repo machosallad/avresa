@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "application.h"
-#include "config.h"
 
 /**
  * @brief Represents the main application.
