@@ -88,8 +88,24 @@ jobs:
           echo "MD5 checksum generated for $FIRMWARE_PATH"
           echo "md5_file_path=$FIRMWARE_PATH.md5" >> $GITHUB_OUTPUT
 
+      - name: Generate firmware information JSON
+        id: generate_firmware_info
+        run: |
+          echo "{" > firmware.json
+          echo "  \"version\": \"${{ steps.gitversion.outputs.FullSemVer }}\"," >> firmware.json
+          echo "  \"date\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"," >> firmware.json
+          echo "  \"md5\": \"$(cat ${{ steps.generate_md5.outputs.md5_file_path }} | cut -d ' ' -f 1)\"" >> firmware.json
+          echo "}" >> firmware.json
+          echo "firmware_info_path=firmware.json" >> $GITHUB_OUTPUT
+
       - name: Store MD5 Checksum
         uses: actions/upload-artifact@v4
         with:
           name: firmware-md5
           path: ${{ steps.generate_md5.outputs.md5_file_path }}
+
+      - name: Store Firmware Information
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-info
+          path: ${{ steps.generate_firmware_info.outputs.firmware_info_path }}
