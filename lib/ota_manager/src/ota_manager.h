@@ -17,13 +17,14 @@ public:
 private:
     bool downloadFile(const String &url, const String &path);
     bool applyFirmware(const String &path);
-    bool verifyChecksum(const String &path, const String &checksumPath);
+    bool verifyChecksum(const String &path, const String &md5);
     String calculateMD5(const String &path);
     String m_currentVersion;
+    String m_expectedMD5;
+    bool extractChecksum(const String &line, String &checksum);
 
     static const String m_firmwareInfoUrl;
     static const String m_firmwareUrl;
-    static const String m_firmwareChecksumUrl;
     Display &m_display;
 };
 

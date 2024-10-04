@@ -9,11 +9,10 @@
 #include "ota_constants.h"
 #include "spiffs_manager.h"
 
-const String OtaManager::m_firmwareInfoUrl = OTA_FIRMWARE_INFO_URL;         // Firmware info file URL
-const String OtaManager::m_firmwareUrl = OTA_FIRMWARE_URL;                  // Firmware file URL
-const String OtaManager::m_firmwareChecksumUrl = OTA_FIRMWARE_CHECKSUM_URL; // Firmware checksum file URL
+const String OtaManager::m_firmwareInfoUrl = OTA_FIRMWARE_INFO_URL; // Firmware info file URL
+const String OtaManager::m_firmwareUrl = OTA_FIRMWARE_URL;          // Firmware file URL
 
-OtaManager::OtaManager(const String &currentVersion, Display &display) : m_currentVersion(currentVersion), m_display(display)
+OtaManager::OtaManager(const String &currentVersion, Display &display) : m_currentVersion(currentVersion), m_display(display), m_expectedMD5("")
 {
 }
 
@@ -24,6 +23,7 @@ OtaManager::~OtaManager()
 bool OtaManager::updateAvailable()
 {
     // Download the JSON file containing firmware info
+    SPIFFSManager spiffsManager;
     const char *jsonPath = "/firmware.json";
 
     if (!downloadFile(m_firmwareInfoUrl, jsonPath))
@@ -50,13 +50,21 @@ bool OtaManager::updateAvailable()
         return false;
     }
 
-    String version = doc["version"];
-    String buildDate = doc["build_date"];
-    String firmwareUrl = doc["firmware_url"];
-    String checksum = doc["checksum"];
+    String version = doc["version"].as<String>();
+    String buildDate = doc["date"].as<String>();
+    String checksumLine = doc["md5"].as<String>();
 
+    // Extract checksum from the line
+    if (!extractChecksum(checksumLine, m_expectedMD5))
+    {
+        Serial.println("Failed to extract checksum from firmware info");
+        return false;
+    }
+
+    Serial.println("Current firmware version: " + m_currentVersion);
     Serial.println("New firmware version: " + version);
     Serial.println("Build date: " + buildDate);
+    Serial.println("Checksum: " + m_expectedMD5);
 
     // Compare versions
     if (version != m_currentVersion)
@@ -74,7 +82,6 @@ bool OtaManager::updateAvailable()
 bool OtaManager::downloadOta()
 {
     const char *firmwarePath = "/firmware.bin";
-    const char *checksumPath = "/firmware.bin.md5";
     bool result = false;
     SPIFFSManager spiffsManager;
 
@@ -82,10 +89,10 @@ bool OtaManager::downloadOta()
     m_display.printText("Downloading update", Display::Line::Line1);
     m_display.printText("Installing update", Display::Line::Line3);
 
-    if (downloadFile(m_firmwareUrl, firmwarePath) && downloadFile(m_firmwareChecksumUrl, checksumPath))
+    if (downloadFile(m_firmwareUrl, firmwarePath))
     {
-        Serial.println("Downloaded firmware and checksum file");
-        if (verifyChecksum(firmwarePath, checksumPath))
+        Serial.println("Downloaded firmware file");
+        if (verifyChecksum(firmwarePath, m_expectedMD5))
         {
             Serial.println("MD5 checksum matches, applying firmware...");
             if (applyFirmware(firmwarePath))
@@ -105,7 +112,7 @@ bool OtaManager::downloadOta()
     }
     else
     {
-        Serial.println("Failed to download firmware or checksum file");
+        Serial.println("Failed to download firmware");
     }
 
     return result;
@@ -285,31 +292,33 @@ String OtaManager::calculateMD5(const String &path)
     return md5.toString();
 }
 
-bool OtaManager::verifyChecksum(const String &file, const String &checksumPath)
+bool OtaManager::extractChecksum(const String &line, String &checksum)
 {
-    File checksumFile = SPIFFS.open(checksumPath);
-    if (!checksumFile)
-    {
-        Serial.println("Failed to open checksum file");
-        return false;
-    }
-
-    String checksumLine = checksumFile.readStringUntil('\n');
-    checksumFile.close();
-
-    // Extract the checksum part from the line
-    int spaceIndex = checksumLine.indexOf(' ');
+    // Extract only checksum from the line if it contains more than just the checksum
+    int spaceIndex = line.indexOf(' ');
     String expectedMD5;
     if (spaceIndex != -1)
-        expectedMD5 = checksumLine.substring(0, spaceIndex);
+        expectedMD5 = line.substring(0, spaceIndex);
     else
-        expectedMD5 = checksumLine;
+        expectedMD5 = line;
 
     expectedMD5.trim(); // Remove any whitespace or newline characters
+
+    if (expectedMD5.length() == 32)
+    {
+        checksum = expectedMD5;
+        return true;
+    }
+
+    return false;
+}
+
+bool OtaManager::verifyChecksum(const String &file, const String &md5)
+{
     String calculatedMD5 = calculateMD5(file);
 
     Serial.println("Calculated MD5: " + calculatedMD5);
-    Serial.println("Expected MD5: " + expectedMD5);
+    Serial.println("Expected MD5: " + md5);
 
-    return calculatedMD5.equalsIgnoreCase(expectedMD5);
+    return calculatedMD5.equalsIgnoreCase(md5);
 }
