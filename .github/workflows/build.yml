@@ -74,6 +74,8 @@ jobs:
 
       - name: Build with PlatformIO
         run: platformio run
+        env:
+          CI: ${{ env.CI }}
 
       - name: Generate MD5 Checksum
         id: generate_md5

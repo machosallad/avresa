@@ -45,7 +45,10 @@ public:
 # Hook the script into the build process
 def before_build(env, platform):
     if not os.getenv('CI'):
+        print("Generating version class for local build.")
         generate_version_class()
+    else:
+        print("Skipping version generation in CI environment.")
 
 if __name__ == "__main__":
     generate_version_class()
