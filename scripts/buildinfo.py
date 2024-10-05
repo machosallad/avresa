@@ -28,6 +28,7 @@ public:
     static const char* semver() {{ return "{semver}"; }}
     static const char* tag() {{ return "{tag}"; }}
     static const char* date() {{ return "{build_date}"; }}
+    static const bool localBuild() {{ return true; }}
 }};
 
 #endif // VERSION_H
