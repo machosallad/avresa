@@ -41,6 +41,7 @@ void Application::init(uint8_t displayType)
     {
         m_display.printText("Connect to WiFi", Display::Line::Line1, Display::Color::Green);
         m_display.printText(m_wifiManager.getIpAddress(), Display::Line::Line2, Display::Color::Green);
+        m_display.printText("Checking for updates", Display::Line::Line3);
 
         if (!Version::localBuild())
         {
@@ -61,11 +62,12 @@ void Application::init(uint8_t displayType)
             }
         }
 
-        m_display.printText("Update departures", Display::Line::Line3, Display::Color::Orange);
+        m_display.printText("Checking for updates", Display::Line::Line3, Display::Color::Green);
+        m_display.printText("Update departures", Display::Line::Line4, Display::Color::Orange);
 
         if (getLatestAnnouncements())
         {
-            m_display.printText("Update departures", Display::Line::Line3, Display::Color::Green);
+            m_display.printText("Update departures", Display::Line::Line4, Display::Color::Green);
             delay(1000);
             updateDisplayInformation();
         }

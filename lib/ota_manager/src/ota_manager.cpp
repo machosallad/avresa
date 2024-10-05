@@ -26,7 +26,7 @@ bool OtaManager::updateAvailable()
     SPIFFSManager spiffsManager;
     const char *jsonPath = "/firmware.json";
 
-    if (!downloadFile(m_firmwareInfoUrl, jsonPath))
+    if (!downloadFile(m_firmwareInfoUrl, jsonPath, false))
     {
         Serial.println("Failed to download firmware info");
         return false;
@@ -123,7 +123,7 @@ String OtaManager::getCurrentVersion()
     return m_currentVersion;
 }
 
-bool OtaManager::downloadFile(const String &url, const String &path)
+bool OtaManager::downloadFile(const String &url, const String &path, bool displayProgress)
 {
     HTTPClient http;
     int httpCode = http.GET();
@@ -177,7 +177,9 @@ bool OtaManager::downloadFile(const String &url, const String &path)
                 if (totalLength > 0)
                 {
                     Serial.printf("Downloaded %d of %d bytes (%.2f%%)\r", downloadedLength, totalLength, (downloadedLength * 100.0) / totalLength);
-                    m_display.fillColorPercentage((downloadedLength * 100) / totalLength, Display::Color::Orange, Display::Line::Line2, 1);
+                    // Fill the progress bar on the display only if the file is a firmware binary
+                    if (displayProgress)
+                        m_display.fillColorPercentage((downloadedLength * 100) / totalLength, Display::Color::Orange, Display::Line::Line2, 1);
                 }
                 else
                 {

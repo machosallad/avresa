@@ -15,7 +15,7 @@ public:
     String getCurrentVersion();
 
 private:
-    bool downloadFile(const String &url, const String &path);
+    bool downloadFile(const String &url, const String &path, bool displayProgress = true);
     bool applyFirmware(const String &path);
     bool verifyChecksum(const String &path, const String &md5);
     String calculateMD5(const String &path);
