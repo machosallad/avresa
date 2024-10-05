@@ -1,16 +1,21 @@
-name: Build PlatformIO Project
+name: Release
 
 on:
   push:
-    branches:
-      - "feature/**"
-  pull_request:
     branches:
       - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    outputs:
+      firmware_file_path: ${{ steps.generate_md5.outputs.firmware_file_path }}
+      md5_file_path: ${{ steps.generate_md5.outputs.md5_file_path }}
+      firmware_info_path: ${{ steps.generate_firmware_info.outputs.firmware_info_path }}
 
     steps:
       - name: Checkout repository
@@ -100,20 +105,43 @@ jobs:
           echo "}" >> firmware.json
           echo "firmware_info_path=firmware.json" >> $GITHUB_OUTPUT
 
-      - name: Store MD5 Checksum
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: firmware-md5
-          path: ${{ steps.generate_md5.outputs.md5_file_path }}
+          tag_name: ${{ steps.gitversion.outputs.SemVer }}
+          release_name: Release ${{ steps.gitversion.outputs.SemVer }}
+          draft: false
+          prerelease: true
 
-      - name: Store Firmware Information
-        uses: actions/upload-artifact@v4
+      - name: Upload Firmware Binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: firmware-info
-          path: ${{ steps.generate_firmware_info.outputs.firmware_info_path }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.generate_md5.outputs.firmware_file_path }}
+          asset_name: firmware.bin
+          asset_content_type: application/octet-stream
 
-      - name: Store Firmware Binary
-        uses: actions/upload-artifact@v4
+      - name: Upload MD5 Checksum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: firmware
-          path: ${{ steps.generate_md5.outputs.firmware_file_path }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.generate_md5.outputs.md5_file_path }}
+          asset_name: firmware.md5
+          asset_content_type: text/plain
+
+      - name: Upload Firmware Information
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.generate_firmware_info.outputs.firmware_info_path }}
+          asset_name: firmware.json
+          asset_content_type: application/json
