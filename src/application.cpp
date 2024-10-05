@@ -42,23 +42,26 @@ void Application::init(uint8_t displayType)
         m_display.printText("Connect to WiFi", Display::Line::Line1, Display::Color::Green);
         m_display.printText(m_wifiManager.getIpAddress(), Display::Line::Line2, Display::Color::Green);
 
-        if (m_otaManager.updateAvailable())
+        if (!Version::localBuild())
         {
-            if (m_otaManager.downloadOta())
+            if (m_otaManager.updateAvailable())
             {
-                m_display.printTextCentered("Update successful", Display::Color::Green);
-                delay(2000);
-                m_display.clearScreen();
-                ESP.restart();
-            }
-            else
-            {
-                m_display.printTextCentered("Update failed", Display::Color::Red);
-                delay(2000);
+                if (m_otaManager.downloadOta())
+                {
+                    m_display.printTextCentered("Update successful", Display::Color::Green);
+                    delay(2000);
+                    m_display.clearScreen();
+                    ESP.restart();
+                }
+                else
+                {
+                    m_display.printTextCentered("Update failed", Display::Color::Red);
+                    delay(2000);
+                }
             }
         }
 
-        m_display.printText("Update departures", Display::Line::Line3, Display::Color::Orange, true);
+        m_display.printText("Update departures", Display::Line::Line3, Display::Color::Orange);
 
         if (getLatestAnnouncements())
         {
@@ -221,5 +224,10 @@ void Application::showSplashScreen()
     delay(2000);
     m_display.printTextCentered(Version::semver(), Display::Color::Green);
     delay(2000);
+    if (Version::localBuild())
+    {
+        m_display.printTextCentered("Local build", Display::Color::Blue);
+        delay(1000);
+    }
     m_display.clearScreen();
 }
