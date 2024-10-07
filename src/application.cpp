@@ -79,11 +79,11 @@ void Application::init(uint8_t displayType)
     else
     {
         Serial.println("Failed to connect to WiFi, start captive portal");
-        m_display.clearScreen();
-        m_display.printText("Configuration required", Display::Line::Line1, Display::Color::Red);
-        m_display.printText("Access point started", Display::Line::Line2);
-        m_display.printText("Connect to AVRESA-AP", Display::Line::Line3);
-        m_display.printText("with phone to configure", Display::Line::Line4);
+        String wifiString = "WIFI:S:" + m_wifiManager.getAPName() + ";T:nopass;;";
+        m_display.printText("Connect to AVRESA", Display::Line::Line1, Display::Color::Orange, true, 3, 2);
+        m_display.printText("with your phone to", Display::Line::Line2, Display::Color::Orange, false, 3, 2);
+        m_display.printText("setup this device.", Display::Line::Line3, Display::Color::Orange, false, 3, 2);
+        m_display.drawQrCode(wifiString, m_display.getDisplayWidth() - 31, 2, Display::Color::White);
         m_wifiManager.startCaptivePortal();
         m_webServer.useCaptivePortal(true);
     }
