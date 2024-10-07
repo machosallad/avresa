@@ -64,6 +64,7 @@ public:
     void fillColorPercentage(uint8_t percentage, Color color = Color::Green);
     void fillColorPercentage(uint8_t percentage, Color color, int16_t y, int16_t height, uint8_t paddingTop = 0);
     void fillColorPercentage(uint8_t percentage, Color color, Line line, uint8_t paddingTop = 0);
+    void setPixel(int16_t x, int16_t y, Color color);
 
     uint16_t color565(Color color);
 

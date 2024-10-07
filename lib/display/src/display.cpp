@@ -97,6 +97,11 @@ void Display::fillColorPercentage(uint8_t percentage, Color color, Line line, ui
     fillColorPercentage(percentage, color, y, fontSizeInPixels(m_currentFont), paddingTop);
 }
 
+void Display::setPixel(int16_t x, int16_t y, Color color)
+{
+    dma_display->drawPixel(x, y, this->color565(color));
+}
+
 uint16_t Display::color565(Color color)
 {
     switch (color)
