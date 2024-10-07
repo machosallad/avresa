@@ -1,6 +1,7 @@
 #include "display.h"
 #include "fonts/avgang_mini.h"
 #include "fonts/avgang.h"
+#include "qrcode.h"
 
 Display::Display(uint8_t [[maybe_unused]] brightness) : m_matrixWidth(64), m_matrixHeight(32), m_matrixChainLength(2), m_maxBrightness(128), m_displayType(DisplayType::DisplayLarge)
 {
@@ -69,6 +70,11 @@ uint16_t Display::getDisplayWidth()
     return m_matrixWidth * m_matrixChainLength;
 }
 
+uint16_t Display::getDisplayHeight()
+{
+    return m_matrixHeight;
+}
+
 void Display::setBrightness(uint8_t brightness)
 {
     // Limit the brightness to max 128
@@ -100,6 +106,26 @@ void Display::fillColorPercentage(uint8_t percentage, Color color, Line line, ui
 void Display::setPixel(int16_t x, int16_t y, Color color)
 {
     dma_display->drawPixel(x, y, this->color565(color));
+}
+
+void Display::drawQrCode(String text, int16_t xOffset, int16_t yOffset, Color color)
+{
+    // Create the QR code
+    QRCode qrcode;
+    uint8_t qrcodeData[qrcode_getBufferSize(3)];
+    qrcode_initText(&qrcode, qrcodeData, 3, 0, text.c_str());
+
+    for (uint8_t y = 0; y < qrcode.size; y++)
+    {
+        // Each horizontal module
+        for (uint8_t x = 0; x < qrcode.size; x++)
+        {
+            if (qrcode_getModule(&qrcode, x, y))
+            {
+                dma_display->drawPixel(x + xOffset, y + yOffset, this->color565(color));
+            }
+        }
+    }
 }
 
 uint16_t Display::color565(Color color)
