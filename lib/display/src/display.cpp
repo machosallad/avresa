@@ -175,10 +175,10 @@ void Display::printText(String text, int16_t line, Color color, bool clearScreen
     printText(text, x, y, color, clearScreen);
 }
 
-void Display::printText(String text, Line line, Color color, bool clearScreen)
+void Display::printText(String text, Line line, Color color, bool clearScreen, uint8_t paddingTop, uint8_t paddingLeft)
 {
-    int16_t x = 0;
-    int16_t y = static_cast<int16_t>(line) * fontSizeInPixels(m_currentFont);
+    int16_t x = 0 + paddingLeft;
+    int16_t y = static_cast<int16_t>(line) * fontSizeInPixels(m_currentFont) + paddingTop;
     printText(text, x, y, color, clearScreen);
 }
 

@@ -51,7 +51,7 @@ public:
     void demo();
     void printText(String text, int16_t x, int16_t y, Color color = Color::Orange, bool clearScreen = false);
     void printText(String text, int16_t line, Color color = Color::Orange, bool clearScreen = false);
-    void printText(String text, Line line, Color color = Color::Orange, bool clearScreen = false);
+    void printText(String text, Line line, Color color = Color::Orange, bool clearScreen = false, uint8_t paddingTop = 0, uint8_t paddingLeft = 0);
     void printTextRightAligned(String text, int16_t line, Color color = Color::Orange);
     void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::Orange);
     void printTextCentered(String text, Color color = Color::Orange);
