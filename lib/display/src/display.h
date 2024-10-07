@@ -51,7 +51,7 @@ public:
     void demo();
     void printText(String text, int16_t x, int16_t y, Color color = Color::Orange, bool clearScreen = false);
     void printText(String text, int16_t line, Color color = Color::Orange, bool clearScreen = false);
-    void printText(String text, Line line, Color color = Color::Orange, bool clearScreen = false);
+    void printText(String text, Line line, Color color = Color::Orange, bool clearScreen = false, uint8_t paddingTop = 0, uint8_t paddingLeft = 0);
     void printTextRightAligned(String text, int16_t line, Color color = Color::Orange);
     void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::Orange);
     void printTextCentered(String text, Color color = Color::Orange);
@@ -60,10 +60,13 @@ public:
     void setFont(Font font);
     Font getFont();
     uint16_t getDisplayWidth();
+    uint16_t getDisplayHeight();
     void setBrightness(uint8_t brightness);
     void fillColorPercentage(uint8_t percentage, Color color = Color::Green);
     void fillColorPercentage(uint8_t percentage, Color color, int16_t y, int16_t height, uint8_t paddingTop = 0);
     void fillColorPercentage(uint8_t percentage, Color color, Line line, uint8_t paddingTop = 0);
+    void setPixel(int16_t x, int16_t y, Color color);
+    void drawQrCode(String text, int16_t xOffset, int16_t yOffset, Color color);
 
     uint16_t color565(Color color);
 
