@@ -189,6 +189,29 @@ void Display::printTextRightAligned(String text, int16_t line, Color color)
     printTextRightAligned(text, x, y, color);
 }
 
+void Display::fadeInText(String text, int16_t x, int16_t y, Color color, uint16_t delayTime)
+{
+    for (uint8_t brightness = 0; brightness <= m_maxBrightness; brightness += 5)
+    {
+        setBrightness(brightness);
+        printText(text, x, y, color);
+        delay(delayTime);
+    }
+    setBrightness(m_maxBrightness); // Ensure max brightness at the end
+}
+
+void Display::fadeInTextCentered(String text, Color color, uint16_t delayTime)
+{
+    clearScreen();
+    for (uint8_t brightness = 0; brightness <= m_maxBrightness; brightness += 5)
+    {
+        setBrightness(brightness);
+        printTextCentered(text, color, false);
+        delay(delayTime);
+    }
+    setBrightness(m_maxBrightness); // Ensure max brightness at the end
+}
+
 void Display::printTextRightAligned(String text, int16_t x, int16_t y, Color color)
 {
     sanitizeText(text);
@@ -234,7 +257,7 @@ uint8_t Display::getFontHeight()
     return fontSizeInPixels(m_currentFont);
 }
 
-void Display::printTextCentered(String text, Color color)
+void Display::printTextCentered(String text, Color color, bool clearScreen)
 {
     sanitizeText(text);
     dma_display->setTextSize(1);
@@ -247,7 +270,8 @@ void Display::printTextCentered(String text, Color color)
 
     int xPosition = dma_display->width() / 2 - w / 2 + 1;
     dma_display->setCursor(xPosition, (m_matrixHeight / 2) + (fontSizeInPixels(m_currentFont) / 4));
-    dma_display->clearScreen();
+    if (clearScreen)
+        dma_display->clearScreen();
     dma_display->print(text);
 }
 

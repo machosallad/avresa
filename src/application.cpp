@@ -43,7 +43,7 @@ void Application::init(uint8_t displayType)
         m_display.printText(m_wifiManager.getIpAddress(), Display::Line::Line2, Display::Color::Green);
         m_display.printText("Checking for updates", Display::Line::Line3);
 
-        if (true)
+        if (!Version::localBuild())
         {
             if (m_otaManager.updateAvailable())
             {
@@ -222,14 +222,14 @@ void Application::run()
 void Application::showSplashScreen()
 {
     m_display.clearScreen();
-    m_display.printTextCentered("Avgång by MakerMelin", Display::Color::Green);
-    delay(2000);
-    m_display.printTextCentered(Version::semver(), Display::Color::Green);
-    delay(2000);
+    m_display.fadeInTextCentered("Avgång by MakerMelin", Display::Color::Green);
+    delay(1000);
+    m_display.fadeInTextCentered(Version::semver(), Display::Color::Green);
+    delay(1000);
     if (Version::localBuild())
     {
-        m_display.printTextCentered("Local build", Display::Color::Blue);
-        delay(1000);
+        m_display.fadeInTextCentered("Local build", Display::Color::Blue);
+        delay(500);
     }
     m_display.clearScreen();
 }

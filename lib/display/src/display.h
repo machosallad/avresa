@@ -54,9 +54,11 @@ public:
     void printText(String text, Line line, Color color = Color::Orange, bool clearScreen = false, uint8_t paddingTop = 0, uint8_t paddingLeft = 0);
     void printTextRightAligned(String text, int16_t line, Color color = Color::Orange);
     void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::Orange);
-    void printTextCentered(String text, Color color = Color::Orange);
     void printTextCenteredHorizontal(String text, Line line, Color color = Color::Orange);
     void printTextCenteredHorizontal(String text, int16_t y, Color color = Color::Orange);
+    void printTextCentered(String text, Color color = Color::Orange, bool clearScreen = true);
+    void fadeInTextCentered(String text, Color color, uint16_t delayTime = 50);
+    void fadeInText(String text, int16_t x, int16_t y, Color color = Color::Orange, uint16_t delayTime = 50);
     uint8_t getFontHeight();
     void clearScreen();
     void setFont(Font font);
