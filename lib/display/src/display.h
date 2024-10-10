@@ -55,6 +55,8 @@ public:
     void printTextRightAligned(String text, int16_t line, Color color = Color::Orange);
     void printTextRightAligned(String text, int16_t x, int16_t y, Color color = Color::Orange);
     void printTextCentered(String text, Color color = Color::Orange);
+    void printTextCenteredHorizontal(String text, Line line, Color color = Color::Orange);
+    void printTextCenteredHorizontal(String text, int16_t y, Color color = Color::Orange);
     uint8_t getFontHeight();
     void clearScreen();
     void setFont(Font font);

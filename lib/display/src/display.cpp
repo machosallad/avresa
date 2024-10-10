@@ -251,6 +251,28 @@ void Display::printTextCentered(String text, Color color)
     dma_display->print(text);
 }
 
+void Display::printTextCenteredHorizontal(String text, Line line, Color color)
+{
+    int16_t y = static_cast<int16_t>(line) * fontSizeInPixels(m_currentFont);
+    printTextCenteredHorizontal(text, y, color);
+}
+
+void Display::printTextCenteredHorizontal(String text, int16_t y, Color color)
+{
+    sanitizeText(text);
+    dma_display->setTextSize(1);
+    dma_display->setTextWrap(false);
+    dma_display->setTextColor(this->color565(color));
+
+    int16_t xOne, yOne;
+    uint16_t w, h;
+    dma_display->getTextBounds(text, 0, 0, &xOne, &yOne, &w, &h);
+    y += fontSizeInPixels(m_currentFont); // Shift the text down to the baseline based on the font size
+    int xPosition = dma_display->width() / 2 - w / 2 + 1;
+    dma_display->setCursor(xPosition, y);
+    dma_display->print(text);
+}
+
 void Display::demo()
 {
     dma_display->clearScreen();
