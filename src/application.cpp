@@ -43,11 +43,11 @@ void Application::init(uint8_t displayType)
         m_display.printText(m_wifiManager.getIpAddress(), Display::Line::Line2, Display::Color::Green);
         m_display.printText("Checking for updates", Display::Line::Line3);
 
-        if (!Version::localBuild())
+        if (true)
         {
             if (m_otaManager.updateAvailable())
             {
-                if (m_otaManager.downloadOta())
+                if (m_otaManager.updateFirmware())
                 {
                     m_display.printTextCentered("Update successful", Display::Color::Green);
                     delay(2000);

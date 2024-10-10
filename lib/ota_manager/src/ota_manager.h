@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "display.h"
+#include <HTTPClient.h>
 
 class OtaManager
 {
@@ -11,20 +12,19 @@ public:
     ~OtaManager();
 
     bool updateAvailable();
-    bool downloadOta();
+    bool updateFirmware();
     String getCurrentVersion();
 
 private:
-    bool downloadFile(const String &url, const String &path, bool displayProgress = true);
-    bool applyFirmware(const String &path);
-    bool verifyChecksum(const String &path, const String &md5);
-    String calculateMD5(const String &path);
-    String m_currentVersion;
-    String m_expectedMD5;
+    bool downloadFile(const String &url, const String &path);
     bool extractChecksum(const String &line, String &checksum);
+    bool flashFromHttpStream(HTTPClient &http, uint32_t size = 0);
+    int sendHttpRequest(HTTPClient &http);
 
     static const String m_firmwareInfoUrl;
     static const String m_firmwareUrl;
+    String m_currentVersion;
+    String m_expectedMD5;
     Display &m_display;
 };
 

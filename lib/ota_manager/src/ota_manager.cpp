@@ -1,4 +1,3 @@
-#include <HTTPClient.h>
 #include <WiFiClientSecure.h>
 #include <Update.h>
 #include <FS.h>
@@ -26,7 +25,7 @@ bool OtaManager::updateAvailable()
     SPIFFSManager spiffsManager;
     const char *jsonPath = "/firmware.json";
 
-    if (!downloadFile(m_firmwareInfoUrl, jsonPath, false))
+    if (!downloadFile(m_firmwareInfoUrl, jsonPath))
     {
         Serial.println("Failed to download firmware info");
         return false;
@@ -79,75 +78,17 @@ bool OtaManager::updateAvailable()
     }
 }
 
-bool OtaManager::downloadOta()
-{
-    const char *firmwarePath = "/firmware.bin";
-    bool result = false;
-    SPIFFSManager spiffsManager;
-
-    m_display.clearScreen();
-    m_display.printText("Downloading update", Display::Line::Line1);
-    m_display.printText("Installing update", Display::Line::Line3);
-
-    if (downloadFile(m_firmwareUrl, firmwarePath))
-    {
-        Serial.println("Downloaded firmware file");
-        if (verifyChecksum(firmwarePath, m_expectedMD5))
-        {
-            Serial.println("MD5 checksum matches, applying firmware...");
-            if (applyFirmware(firmwarePath))
-            {
-                Serial.println("Firmware update successful");
-                result = true;
-            }
-            else
-            {
-                Serial.println("Firmware update failed");
-            }
-        }
-        else
-        {
-            Serial.println("MD5 checksum does not match, aborting update");
-        }
-    }
-    else
-    {
-        Serial.println("Failed to download firmware");
-    }
-
-    return result;
-}
-
 String OtaManager::getCurrentVersion()
 {
     return m_currentVersion;
 }
 
-bool OtaManager::downloadFile(const String &url, const String &path, bool displayProgress)
+bool OtaManager::downloadFile(const String &url, const String &path)
 {
     HTTPClient http;
+    http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
+    http.begin(url);
     int httpCode = http.GET();
-    String currentUrl = url;
-    int maxRedirects = 5; // Maximum number of redirects to follow
-
-    Serial.println("Discovering redirects...");
-    for (int i = 0; i < maxRedirects; i++)
-    {
-        http.begin(currentUrl);
-        httpCode = http.GET();
-
-        // Handle HTTP redirection
-        if (httpCode == HTTP_CODE_FOUND || httpCode == HTTP_CODE_MOVED_PERMANENTLY || httpCode == HTTP_CODE_TEMPORARY_REDIRECT || httpCode == HTTP_CODE_PERMANENT_REDIRECT)
-        {
-            currentUrl = http.getLocation();
-            Serial.println("Redirected to: " + currentUrl);
-            http.end(); // End the current connection
-        }
-        else
-        {
-            break; // Exit the loop if not a redirection
-        }
-    }
 
     if (httpCode == HTTP_CODE_OK)
     {
@@ -177,9 +118,6 @@ bool OtaManager::downloadFile(const String &url, const String &path, bool displa
                 if (totalLength > 0)
                 {
                     Serial.printf("Downloaded %d of %d bytes (%.2f%%)\r", downloadedLength, totalLength, (downloadedLength * 100.0) / totalLength);
-                    // Fill the progress bar on the display only if the file is a firmware binary
-                    if (displayProgress)
-                        m_display.fillColorPercentage((downloadedLength * 100) / totalLength, Display::Color::Orange, Display::Line::Line2, 1);
                 }
                 else
                 {
@@ -206,94 +144,6 @@ bool OtaManager::downloadFile(const String &url, const String &path, bool displa
     }
 }
 
-bool OtaManager::applyFirmware(const String &path)
-{
-    Serial.println("Applying firmware from path: " + String(path));
-
-    if (!SPIFFS.exists(path))
-    {
-        Serial.println("Firmware file does not exist");
-        return false;
-    }
-
-    File file = SPIFFS.open(path);
-    if (!file)
-    {
-        Serial.println("Failed to open firmware file");
-        return false;
-    }
-
-    size_t fileSize = file.size();
-    Serial.println("Firmware file size: " + String(fileSize) + " bytes");
-
-    if (!Update.begin(fileSize))
-    {
-        Serial.println("Not enough space to begin OTA");
-        file.close();
-        return false;
-    }
-
-    // Set up progress callback
-    Update.onProgress([this](size_t done, size_t total)
-                      {
-        Serial.printf("Progress: %u%%\r", (done * 100) / total);
-                        m_display.fillColorPercentage((done * 100) / total, Display::Color::Orange, Display::Line::Line4, 1); });
-
-    size_t written = Update.writeStream(file);
-    if (written == fileSize)
-    {
-        Serial.println("Written : " + String(written) + " successfully");
-    }
-    else
-    {
-        Serial.println("Written only : " + String(written) + "/" + String(fileSize) + ". Retry?");
-    }
-
-    if (Update.end())
-    {
-        Serial.println("OTA done!");
-        if (Update.isFinished())
-        {
-            Serial.println("Update successfully completed. Applied on next boot.");
-            return true;
-        }
-        else
-        {
-            Serial.println("Update not finished? Something went wrong!");
-            return false;
-        }
-    }
-    else
-    {
-        Serial.println("Error Occurred. Error #: " + String(Update.getError()));
-        return false;
-    }
-
-    file.close();
-}
-
-String OtaManager::calculateMD5(const String &path)
-{
-    File file = SPIFFS.open(path);
-    if (!file)
-    {
-        Serial.println("Failed to open file for reading");
-        return String();
-    }
-
-    MD5Builder md5;
-    md5.begin();
-    while (file.available())
-    {
-        uint8_t buffer[512];
-        size_t bytesRead = file.read(buffer, sizeof(buffer));
-        md5.add(buffer, bytesRead);
-    }
-    file.close();
-    md5.calculate();
-    return md5.toString();
-}
-
 bool OtaManager::extractChecksum(const String &line, String &checksum)
 {
     // Extract only checksum from the line if it contains more than just the checksum
@@ -315,12 +165,103 @@ bool OtaManager::extractChecksum(const String &line, String &checksum)
     return false;
 }
 
-bool OtaManager::verifyChecksum(const String &file, const String &md5)
+bool OtaManager::updateFirmware()
 {
-    String calculatedMD5 = calculateMD5(file);
+    HTTPClient http;
+    http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
+    if (!http.begin(m_firmwareUrl))
+    {
+        return false; // httpclient setup error
+    }
+    Serial.printf("Sending HTTP request '%s'\n", m_firmwareUrl.c_str());
 
-    Serial.println("Calculated MD5: " + calculatedMD5);
-    Serial.println("Expected MD5: " + md5);
+    // Connect and send HTTP request to server
+    int size = sendHttpRequest(http);
 
-    return calculatedMD5.equalsIgnoreCase(md5);
+    // Is there an image to download
+    if (size > 0)
+    {
+        m_display.clearScreen();
+        m_display.printTextCenteredHorizontal("Downloading update", Display::Line::Line2);
+
+        if (flashFromHttpStream(http))
+        {
+            http.end();
+            return true; // End connection
+        }
+    }
+    else
+    {
+        Serial.println("Image file not found");
+    }
+    http.end(); // End connection
+
+    return false;
+}
+
+int OtaManager::sendHttpRequest(HTTPClient &http)
+{
+    // Set request headers to be sent to server
+    http.useHTTP10(true); // Use HTTP/1.0 for update since the update handler does not support any transfer encoding
+    http.setTimeout(8000);
+    http.addHeader("Cache-Control", "no-cache");
+    http.setUserAgent("ESP32");
+
+    int code = http.GET();
+    int len = http.getSize();
+
+    if (code == HTTP_CODE_OK)
+    {
+        return (len > 0 ? len : 0); // Return 0 or length of image to download
+    }
+    else if (code < 0)
+    {
+        Serial.printf("HTTP GET request failed, error: %s\n", http.errorToString(code).c_str());
+        return code;
+    }
+    else
+    {
+        Serial.printf("HTTP GET request failed, error code: %d\n", code);
+        return -code;
+    }
+}
+
+bool OtaManager::flashFromHttpStream(HTTPClient &http, uint32_t size)
+{
+    size = (size == 0 ? http.getSize() : size);
+    if (size == 0)
+    {
+        return false;
+    }
+
+    WiFiClient *client = http.getStreamPtr();
+    Update.onProgress([this](size_t done, size_t total)
+                      {
+        Serial.printf("Progress: %u%%\r", (done * 100) / total);
+                        m_display.fillColorPercentage((done * 100) / total, Display::Color::Orange, Display::Line::Line3, 1); });
+
+    if (!Update.begin(size, U_FLASH))
+    {
+        Serial.printf("Update.begin failed! (%s)\n", Update.errorString());
+        return false;
+    }
+
+    if (!Update.setMD5(m_expectedMD5.c_str()))
+    {
+        Serial.println("Failed to set MD5 checksum");
+    }
+
+    if (Update.writeStream(*client) != size)
+    {
+        Serial.printf("Update.writeStream failed! (%s)\n", Update.errorString());
+        return false;
+    }
+
+    if (!Update.end())
+    {
+        Serial.printf("Update.end failed! (%s)\n", Update.errorString());
+        return false;
+    }
+
+    return true;
 }
