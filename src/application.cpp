@@ -28,6 +28,7 @@ void Application::init(uint8_t displayType)
     // Register observers for settings and configuration
     m_webServer.registerObserver(Setting::Brightness, std::bind(&Display::setBrightness, &m_display, std::placeholders::_1));
     m_webServer.registerObserver(Setting::StationCode, std::bind(&TrafikverketClient::setStationCode, &m_trafikverketClient, std::placeholders::_1));
+    m_webServer.registerObserver(Setting::StationCode, std::bind(&FileManager::saveStationCode, &m_fileManager, std::placeholders::_1));
     m_webServer.registerReloadObserver(std::bind(&Application::loadTrainStationAnnouncements, this));
     m_webServer.registerObserver(Setting::ApiKey, std::bind(&TrafikverketClient::setApiKey, &m_trafikverketClient, std::placeholders::_1));
     m_webServer.registerObserver(Setting::WifiSSID, std::bind(&WiFiManager::setSSID, &m_wifiManager, std::placeholders::_1));
