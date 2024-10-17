@@ -104,6 +104,40 @@
           });
       }
 
+      function saveStation() {
+        const station = document.getElementById("station").value;
+        const feedbackElement = document.getElementById("stationFeedback");
+
+        // Show a loading message
+        feedbackElement.innerHTML =
+          '<div class="alert alert-info">Saving...</div>';
+
+        // Make an AJAX request to save the API key
+        fetch("/setting", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ setting: "stationCode", value: station }),
+        })
+          .then((response) =>
+            response
+              .json()
+              .then((data) => ({ status: response.status, body: data }))
+          )
+          .then(({ status, body }) => {
+            if (status === 200) {
+              feedbackElement.innerHTML = `<div class="alert alert-success">${body.message}</div>`;
+            } else {
+              feedbackElement.innerHTML = `<div class="alert alert-danger">${body.message}</div>`;
+            }
+          })
+          .catch((error) => {
+            feedbackElement.innerHTML =
+              '<div class="alert alert-danger">An error occurred.</div>';
+          });
+      }
+
       function saveApiKey() {
         const apiKey = document.getElementById("apiKey").value;
         const feedbackElement = document.getElementById("apiKeyFeedback");
@@ -200,7 +234,22 @@
       </div>
 
       <div class="my-4">
-        <h2>API Key Configuration</h2>
+        <h2>Default station</h2>
+        <div class="form-group">
+          <label for="station">Station:</label>
+          <select id="station">
+            <option value="Sl">Sala</option>
+            <option value="U">Uppsala</option>
+            <option value="Vå">Västerås</option>
+            <option value="Cst">Stockholm C</option>
+          </select>
+        </div>
+        <button class="btn" onclick="saveApiKey()">Save station</button>
+        <div id="stationFeedback"></div>
+      </div>
+
+      <div class="my-4">
+        <h2>API Configuration</h2>
         <div class="form-group">
           <label for="apiKey">API Key:</label>
           <input type="text" id="apiKey" placeholder="Enter API Key" />
