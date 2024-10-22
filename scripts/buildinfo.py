@@ -2,6 +2,10 @@ import os
 import subprocess
 import json
 
+def get_current_branch():
+    result = subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], capture_output=True, text=True, check=True)
+    return result.stdout.strip()
+
 def generate_version_class():
     try:
         # Run GitVersion and capture the output
@@ -16,6 +20,10 @@ def generate_version_class():
         tag = version_info['PreReleaseTag']
         build_date = version_info['CommitDate']
 
+        # Determine if this is a local build
+        current_branch = get_current_branch()
+        local_build = 'false' if current_branch == 'main' else 'true'
+
         # Generate the Version class in C++ syntax
         version_class = f"""#ifndef VERSION_H
 #define VERSION_H
@@ -28,7 +36,7 @@ public:
     static const char* semver() {{ return "{semver}"; }}
     static const char* tag() {{ return "{tag}"; }}
     static const char* date() {{ return "{build_date}"; }}
-    static const bool localBuild() {{ return true; }}
+    static const bool localBuild() {{ return {local_build}; }}
 }};
 
 #endif // VERSION_H
